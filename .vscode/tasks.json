@@ -19,6 +19,21 @@
 				"reveal": "always"
 			},
 			"group": "build"
+		},
+		{
+			"label": "Lint",
+			"command": "deno",
+			"type": "shell",
+			"args": [
+				"lint",
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
 		}
 	]
 }
