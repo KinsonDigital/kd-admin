@@ -1,0 +1,33 @@
+{
+    "cSpell.words": [
+        "Kinson"
+	],
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/node_modules": true,
+	},
+    "deno.enable": true,
+	"deno.lint": true,
+    "[typescript]": {
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4,
+    },
+	"[yaml]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+	},
+	"[jsonc]": {
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4,
+	},
+	"editor.detectIndentation": false,
+	"[github-actions-workflow]": {
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true
+	},
+}
