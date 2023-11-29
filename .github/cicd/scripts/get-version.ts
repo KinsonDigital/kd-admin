@@ -3,7 +3,7 @@ import { VersionPuller } from "../core/VersionPuller.ts";
 
 const versionPuller: VersionPuller = new VersionPuller();
 
-const version = versionPuller.getVersion(`${Deno.cwd()}./deno.json`);
+const version = versionPuller.getVersion("deno.json");
 
 const outputFilePath = Deno.env.get("GITHUB_OUTPUT") ?? "";
 
