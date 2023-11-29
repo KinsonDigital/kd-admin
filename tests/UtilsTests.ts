@@ -12,4 +12,3 @@ Deno.test("clamp |> when-num-is-larger-than-max |> returns-max-value", () => {
 	// Assert
 	assertEquals(actual, expected);
 });
-
