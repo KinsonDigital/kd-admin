@@ -36,8 +36,6 @@ export class Directory {
 
 		extension = extension.trim();
 
-		const extensionRegex = /\.[a-zA-Z]/g;
-
 		extension = Utils.isNothing(extension) ? "*.*" : extension;
 
 		if (extension != "*.*") {
