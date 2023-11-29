@@ -40,7 +40,7 @@ const cli: CLI = new CLI();
 const compileTargetAsync = async (compileTarget: string): Promise<string> => {
 	const denoCompileTarget = compileTargetMonikers[compileTarget]
 	const fileExtension = targetMoniker === "win-x64" ? ".exe" : "";
-	const fileName = `kdcli${fileExtension}`;
+	const fileName = `kdcli-${compileTarget}-${fileExtension}`;
 	const cwd = Deno.cwd();
 	let command = `deno compile --target ${denoCompileTarget} --output '${cwd}/${outputDir}/${compileTarget}/${fileName}' '${cwd}/src/main.ts'`;
 
