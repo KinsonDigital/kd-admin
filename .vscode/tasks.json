@@ -40,7 +40,9 @@
 		{
 			"label": "build",
 			"detail": "Builds the project by running deno check.",
-			"dependsOn": ["clear-screen"],
+			"dependsOn": [
+				"clear-screen"
+			],
 			"command": "deno",
 			"type": "shell",
 			"args": [
@@ -61,7 +63,9 @@
 		{
 			"label": "lint",
 			"detail": "Performs linting on the project source code.",
-			"dependsOn": ["clear-screen"],
+			"dependsOn": [
+				"clear-screen"
+			],
 			"command": "deno",
 			"type": "shell",
 			"args": [
@@ -78,7 +82,9 @@
 		{
 			"label": "cache-dependencies",
 			"detail": "Cache dependencies for the project.",
-			"dependsOn": ["clear-screen"],
+			"dependsOn": [
+				"clear-screen"
+			],
 			"command": "deno",
 			"type": "shell",
 			"args": [
@@ -96,7 +102,10 @@
 		{
 			"label": "compile-all",
 			"detail": "Compiles the project into an executable.",
-			"dependsOn": ["clear-screen", "clean-dist"],
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
 			"command": "deno",
 			"type": "shell",
 			"options": {
@@ -119,7 +128,10 @@
 		{
 			"label": "compile-win-x64",
 			"detail": "Compiles the project into an executable.",
-			"dependsOn": ["clear-screen", "clean-dist"],
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
 			"command": "deno",
 			"type": "shell",
 			"options": {
@@ -142,7 +154,10 @@
 		{
 			"label": "compile-linux-x64",
 			"detail": "Compiles the project into an executable.",
-			"dependsOn": ["clear-screen", "clean-dist"],
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
 			"command": "deno",
 			"type": "shell",
 			"options": {
@@ -165,7 +180,10 @@
 		{
 			"label": "compile-apple-darwin-x64",
 			"detail": "Compiles the project into an executable.",
-			"dependsOn": ["clear-screen", "clean-dist"],
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
 			"command": "deno",
 			"type": "shell",
 			"options": {
@@ -188,7 +206,10 @@
 		{
 			"label": "compile-apple-darwin-arm",
 			"detail": "Compiles the project into an executable.",
-			"dependsOn": ["clear-screen", "clean-dist"],
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
 			"command": "deno",
 			"type": "shell",
 			"options": {

@@ -1,5 +1,5 @@
 {
-    "cSpell.words": [
+	"cSpell.words": [
 		"aarch",
 		"kdcli",
 		"Kinson",
@@ -15,12 +15,12 @@
 		"**/node_modules": true,
 		"**/dist": true,
 	},
-    "deno.enable": true,
+	"deno.enable": true,
 	"deno.lint": true,
-    "[typescript]": {
+	"[typescript]": {
 		"editor.insertSpaces": false,
 		"editor.tabSize": 4,
-    },
+	},
 	"[yaml]": {
 		"editor.insertSpaces": true,
 		"editor.tabSize": 2,
