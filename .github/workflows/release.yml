@@ -126,6 +126,14 @@ jobs:
       - name: Run Tests
         run: deno test --allow-read ./tests/*Tests.ts;
 
+      - name: Compile To All Targets
+        run: |
+          deno run `
+            --allow-read `
+            --allow-run `
+            "${{ github.workspace }}/.github/cicd/scripts/compiler.ts" `
+            "all";
+
       - name: Creating ${{ inputs.release-type }} GitHub Release
         if: ${{ inputs.dry-run == false }}
         uses: softprops/action-gh-release@v1
