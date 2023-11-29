@@ -1,6 +1,9 @@
 {
     "cSpell.words": [
-        "Kinson"
+		"aarch",
+		"kdcli",
+		"Kinson",
+		"msvc"
 	],
 	"files.exclude": {
 		"**/.git": true,
