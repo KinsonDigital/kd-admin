@@ -4,7 +4,7 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
-		{
+		{ // PLAYGROUND
 			"request": "launch",
 			"name": "Playground",
 			"type": "node",
@@ -27,9 +27,9 @@
 			],
 			"attachSimplePort": 9229,
 		},
-		{
+		{ // DEBUG APP
+			"name": "Debug App",
 			"request": "launch",
-			"name": "Launch Program",
 			"type": "node",
 			"program": "${workspaceFolder}/src/main.ts",
 			"cwd": "${workspaceFolder}",
@@ -46,8 +46,8 @@
 			],
 			"attachSimplePort": 9229
 		},
-		{
-			"name": "Debug Test File",
+		{ // DEBUG UNIT TEST FILE
+			"name": "Debug Unit Test File",
 			"request": "launch",
 			"type": "node",
 			"cwd": "${workspaceFolder}/tests",
@@ -69,9 +69,9 @@
 				"runtimeExecutable": "${userHome}/.deno/bin/deno"
 			},
 		},
-		{
+		{ // COMPILER CICD SCRIPT
+			"name": "Compiler CICD Script",
 			"request": "launch",
-			"name": "Compiler Script",
 			"type": "node",
 			"program": "${workspaceFolder}/.github/cicd/scripts/compiler.ts",
 			"cwd": "${workspaceFolder}",
