@@ -84,7 +84,8 @@
 			"runtimeArgs": [
 				"run",
 				"--inspect-wait",
-				"--allow-all",
+				"--allow-read",
+				"--allow-run",
 			],
 			"args": [
 				"all",

@@ -113,7 +113,8 @@
 			},
 			"args": [
 				"run",
-				"-A",
+				"--allow-read",
+				"--allow-run",
 				"${workspaceFolder}/.github/cicd/scripts/compiler.ts",
 				"all"
 			],
