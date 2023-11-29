@@ -4,19 +4,89 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+		{
+            "request": "launch",
+            "name": "Playground",
+            "type": "node",
+            "program": "${workspaceFolder}/playground.ts",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+            },
+            "linux": {
+                "runtimeExecutable": "${userHome}/.deno/bin/deno"
+            },
+            "runtimeArgs": [
+                "run",
+                "--inspect-wait",
+                "--allow-all"
+            ],
+            "attachSimplePort": 9229,
+        },
         {
             "request": "launch",
             "name": "Launch Program",
             "type": "node",
             "program": "${workspaceFolder}/src/main.ts",
             "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "C:\\Users\\kinso\\.deno\\bin\\deno.EXE",
+            "windows": {
+                "runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+            },
+            "linux": {
+                "runtimeExecutable": "${userHome}/.deno/bin/deno"
+            },
             "runtimeArgs": [
                 "run",
                 "--inspect-wait",
                 "--allow-all"
             ],
             "attachSimplePort": 9229
+        },
+		{
+            "name": "Debug Test File",
+            "request": "launch",
+            "type": "node",
+            "cwd": "${workspaceFolder}/tests",
+            "runtimeArgs": [
+                "test",
+                "--inspect-brk",
+                "--allow-all",
+				"${fileBasename}",
+            ],
+            "attachSimplePort": 9229,
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "windows": {
+                "runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+            },
+            "linux": {
+                "runtimeExecutable": "${userHome}/.deno/bin/deno"
+            },
+        },
+		{
+            "request": "launch",
+            "name": "Compiler Script",
+            "type": "node",
+            "program": "${workspaceFolder}/.github/cicd/scripts/compiler.ts",
+            "cwd": "${workspaceFolder}",
+            "windows": {
+                "runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+            },
+            "linux": {
+                "runtimeExecutable": "${userHome}/.deno/bin/deno"
+            },
+            "runtimeArgs": [
+                "run",
+                "--inspect-wait",
+                "--allow-all",
+            ],
+			"args": [
+				"all",
+			],
+            "attachSimplePort": 9229,
+			"preLaunchTask": "clean-dist"
         }
     ]
 }
