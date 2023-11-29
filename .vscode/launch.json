@@ -8,19 +8,23 @@
             "request": "launch",
             "name": "Playground",
             "type": "node",
-            "program": "${workspaceFolder}/playground.ts",
+			"program": "${workspaceFolder}/playground.ts",
             "cwd": "${workspaceFolder}",
             "windows": {
-                "runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
             },
             "linux": {
-                "runtimeExecutable": "${userHome}/.deno/bin/deno"
+				"runtimeExecutable": "${userHome}/.deno/bin/deno"
             },
             "runtimeArgs": [
-                "run",
+				"run",
                 "--inspect-wait",
-                "--allow-all"
+                "--allow-all",
             ],
+			"args": [
+				"${workspaceFolder}",
+				"${env:CICD_TOKEN}",
+			],
             "attachSimplePort": 9229,
         },
         {
