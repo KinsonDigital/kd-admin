@@ -92,6 +92,25 @@
 			],
 			"attachSimplePort": 9229,
 			"preLaunchTask": "clean-dist"
-		}
+		},
+		{ // GET VERSION CICD SCRIPT
+			"request": "launch",
+			"name": "Get Version CICD Script",
+			"type": "node",
+			"program": "${workspaceFolder}/.github/cicd/scripts/get-version.ts",
+			"cwd": "${workspaceFolder}",
+			"windows": {
+				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+			},
+			"linux": {
+				"runtimeExecutable": "${userHome}/.deno/bin/deno"
+			},
+			"runtimeArgs": [
+				"run",
+				"--inspect-wait",
+				"--allow-all",
+			],
+			"attachSimplePort": 9229,
+		},
 	]
 }
