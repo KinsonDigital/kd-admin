@@ -39,6 +39,7 @@ jobs:
 
       - name: Get Version
         id: get_version
+        working-directory: ${{ github.workspace }}
         run: |
           $scriptPath = "${{ github.workspace }}/.github/cicd/scripts/get-version.ts";
 
