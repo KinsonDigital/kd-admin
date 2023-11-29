@@ -20,14 +20,14 @@ version = version.startsWith("v") ? version : `v${version}`;
 
 let releaseNotesDirName = "";
 
-if (Utils.validPreviewVersion(versionType)) {
+if (versionType === "preview") {
 	if (Utils.isNotValidPreviewVersion(version)) {
 		Utils.printError(`The preview version '${version}' is not valid.`);
 		Deno.exit(300);
 	}
 
 	releaseNotesDirName = "PreviewReleases";
-} else if (Utils.validProdVersion(versionType)) {
+} else if (versionType === "production") {
 	if (Utils.isNotValidProdVersion(version)) {
 		Utils.printError(`The production version '${version}' is not valid.`);
 		Deno.exit(400);
