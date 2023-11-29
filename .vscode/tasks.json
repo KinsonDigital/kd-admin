@@ -1,0 +1,234 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "clear-screen",
+			"detail": "Clears the terminal screen.",
+			"windows": {
+				"command": "cls"
+			},
+			"type": "shell",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "clean-dist",
+			"detail": "Cleans the dist directory.",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"windows": {
+				"command": "if (Test-Path ./dist/) { Remove-Item ./dist/ -Force -Recurse }"
+			},
+			"linux": {
+				"command": "rm --force --recursive ./dist/"
+			},
+			"type": "shell",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "build",
+			"detail": "Builds the project by running deno check.",
+			"dependsOn": [
+				"clear-screen"
+			],
+			"command": "deno",
+			"type": "shell",
+			"args": [
+				"run",
+				"--allow-read",
+				"--allow-run",
+				"--allow-sys",
+				"${workspaceFolder}/.github/cicd/scripts/deno-check.ts"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "lint",
+			"detail": "Performs linting on the project source code.",
+			"dependsOn": [
+				"clear-screen"
+			],
+			"command": "deno",
+			"type": "shell",
+			"args": [
+				"lint",
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "cache-dependencies",
+			"detail": "Cache dependencies for the project.",
+			"dependsOn": [
+				"clear-screen"
+			],
+			"command": "deno",
+			"type": "shell",
+			"args": [
+				"cache",
+				"./deps.ts"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "compile-all",
+			"detail": "Compiles the project into an executable.",
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
+			"command": "deno",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": [
+				"run",
+				"--allow-read",
+				"--allow-run",
+				"${workspaceFolder}/.github/cicd/scripts/compiler.ts",
+				"all"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "compile-win-x64",
+			"detail": "Compiles the project into an executable.",
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
+			"command": "deno",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": [
+				"run",
+				"-A",
+				"${workspaceFolder}/.github/cicd/scripts/compiler.ts",
+				"win-x64"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "compile-linux-x64",
+			"detail": "Compiles the project into an executable.",
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
+			"command": "deno",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": [
+				"run",
+				"-A",
+				"${workspaceFolder}/.github/cicd/scripts/compiler.ts",
+				"linux-x64"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "compile-apple-darwin-x64",
+			"detail": "Compiles the project into an executable.",
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
+			"command": "deno",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": [
+				"run",
+				"-A",
+				"${workspaceFolder}/.github/cicd/scripts/compiler.ts",
+				"mac-x64"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{
+			"label": "compile-apple-darwin-arm",
+			"detail": "Compiles the project into an executable.",
+			"dependsOn": [
+				"clear-screen",
+				"clean-dist"
+			],
+			"command": "deno",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": [
+				"run",
+				"-A",
+				"${workspaceFolder}/.github/cicd/scripts/compiler.ts",
+				"mac-arm"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		}
+	]
+}

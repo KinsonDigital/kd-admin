@@ -1,0 +1,30 @@
+{
+    "version": "v1.0.0-preview.1",
+    "tasks": {
+        "build": "deno run -A ./.github/cicd/scripts/deno-check.ts"
+    },
+    "lint": {
+        "include": [
+            "src/",
+            "tests/"
+        ]
+    },
+    "fmt": {
+        "include": [
+            "src/",
+            "tests/"
+        ],
+        "exclude": [
+            "**/*.md",
+            "**/*.json",
+            "**/*.js",
+            "**/*.yml",
+            "**/*.yaml"
+        ],
+        "useTabs": true,
+        "lineWidth": 130,
+        "indentWidth": 4,
+        "semiColons": true,
+        "singleQuote": false
+    }
+}
