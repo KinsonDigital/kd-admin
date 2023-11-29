@@ -34,9 +34,22 @@ export class Directory {
 	public static getFiles(dirPath: string, extension:string, recursive = false): string[] {
 		let files: string[] = [];
 
+		extension = extension.trim();
+
+		const extensionRegex = /\.[a-zA-Z]/g;
+
 		extension = Utils.isNothing(extension) ? "*.*" : extension;
-		extension = extension.startsWith("*") ? extension.substring(1) : extension;
-		extension = extension.startsWith(".") ? extension : `.${extension}`;
+
+		if (extension != "*.*") {
+			extension = extension.startsWith("*.") ? extension.substring(1) : extension;
+
+			if (!extension.startsWith(".") || extension.length === 1) {
+				const errorMsg = `The extension '${extension}' is not supported.\n` +
+									`Must be a value of '*.*' or '*.<extension>'.`;
+				console.log(errorMsg);
+				throw new Error(errorMsg);
+			}
+		}
 
 		if (dirPath === undefined || dirPath === null || dirPath === "") {
 			const errorMsg = "The dirPath parameter cannot be null or empty.";
@@ -44,7 +57,7 @@ export class Directory {
 			Deno.exit(1);
 		}
 
-		dirPath = dirPath === "." || dirPath === "/" ? "." : dirPath;
+		dirPath = dirPath === "." || dirPath === "./" ? Deno.cwd() : dirPath;
 
 		for (const dirEntry of Deno.readDirSync(dirPath)) {
 			const entry = dirPath + "/" + dirEntry.name;
