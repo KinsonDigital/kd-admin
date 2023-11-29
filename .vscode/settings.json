@@ -26,6 +26,7 @@
 		"editor.tabSize": 2,
 	},
 	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features",
 		"editor.insertSpaces": false,
 		"editor.tabSize": 4,
 	},
