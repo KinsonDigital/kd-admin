@@ -143,10 +143,7 @@ jobs:
           body_path: "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
           files: |
             "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/win-x64/kdcli-win-x64.exe"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/linux-x64/kdcli-linux-x64"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/mac-x64/kdcli-mac-x64"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/mac-arm/kdcli-mac-arm"
+            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli*"
           tag_name: "${{ needs.get_version.outputs.version }}"
           prerelease: ${{ inputs.release-type == 'Preview' }}
           draft: false

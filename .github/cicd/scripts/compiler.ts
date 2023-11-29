@@ -42,7 +42,7 @@ const compileTargetAsync = async (compileTarget: string): Promise<string> => {
 	const fileExtension = compileTarget === "win-x64" ? ".exe" : "";
 	const fileName = `kdcli-${compileTarget}${fileExtension}`;
 	const cwd = Deno.cwd();
-	let command = `deno compile --target ${denoCompileTarget} --output '${cwd}/${outputDir}/${compileTarget}/${fileName}' '${cwd}/src/main.ts'`;
+	let command = `deno compile --target ${denoCompileTarget} --output '${cwd}/${outputDir}/${fileName}' '${cwd}/src/main.ts'`;
 
 	console.log(`Compiling with the deno command:\n\t${command}`);
 	const commandResult = await cli.runAsync(command);
