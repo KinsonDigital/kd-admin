@@ -1,7 +1,7 @@
 // ----IMPORTS----
 
 // Official Deno Modules
-import { existsSync } from "https://deno.land/std@0.208.0/fs/exists.ts";
+import { existsSync, walkSync } from "https://deno.land/std@0.208.0/fs/mod.ts";
 import { assert, assertEquals, assertThrows, assertRejects, equal } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg } from "https://deno.land/std@0.208.0/testing/mock.ts";
 
@@ -15,7 +15,7 @@ import chalk from "npm:chalk@4.1.1";
 // ----EXPORTS----
 
 // Official Deno Module Exports
-export { existsSync }
+export { existsSync, walkSync }
 export { assert, assertEquals, assertThrows, assertRejects, equal };
 export { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg };
 
@@ -25,4 +25,3 @@ export { Input, Select };
 
 // NPM Module Exports
 export { chalk };
-
