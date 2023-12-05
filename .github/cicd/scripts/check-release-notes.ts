@@ -1,4 +1,4 @@
-import { existsSync } from "../../../deps.ts";
+import { walkSync } from "../../../deps.ts";
 import { Utils } from "../../../src/core/Utils.ts";
 
 if (Deno.args.length != 2) {
@@ -36,9 +36,27 @@ if (versionType === "preview") {
 	releaseNotesDirName = "ProductionReleases";
 }
 
-const releaseNotesDirPath = `./ReleaseNotes/${releaseNotesDirName}/Release-Notes-${version}.md`;
+const searchDir = Deno.cwd().trim();
 
-if (!existsSync(releaseNotesDirPath, { isDirectory: true })) {
-	Utils.printError(`The release notes '${releaseNotesDirPath}' does not exist.`);
-	Deno.exit(500);
+console.log(`Search Directory: ${searchDir}`);
+
+const releaseNotesFileName = `Release-Notes-${version}.md`;
+
+const entries = walkSync(searchDir, {
+	includeFiles: true,
+	includeDirs: false,
+	exts: [".md"],
+	match: [new RegExp(`.*${releaseNotesFileName}.*`, "gm")]
+});
+
+const configFiles = [...entries]
+	.filter((entry) => {
+		return entry.path.includes("ReleaseNotes") && entry.path.includes(releaseNotesDirName);
+	})
+	.map((entry) => entry);
+
+if (configFiles.length === 0) {
+	const errorMsg = `The release notes '${releaseNotesFileName}' file could not be found.`;
+	Utils.printNotice(errorMsg);
+	Deno.exit(1);
 }
