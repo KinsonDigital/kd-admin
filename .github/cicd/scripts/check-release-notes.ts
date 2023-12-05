@@ -1,5 +1,5 @@
+import { existsSync } from "../../../deps.ts";
 import { Utils } from "../../../src/core/Utils.ts";
-import { File } from "../core/File.ts";
 
 if (Deno.args.length != 2) {
 	let errorMsg = `The required number of arguments is 2 but received ${Deno.args.length}.`;
@@ -38,7 +38,7 @@ if (versionType === "preview") {
 
 const releaseNotesDirPath = `./ReleaseNotes/${releaseNotesDirName}/Release-Notes-${version}.md`;
 
-if (File.DoesNotExist(releaseNotesDirPath)) {
+if (!existsSync(releaseNotesDirPath, { isDirectory: true })) {
 	Utils.printError(`The release notes '${releaseNotesDirPath}' does not exist.`);
 	Deno.exit(500);
 }

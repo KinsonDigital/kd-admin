@@ -1,26 +1,38 @@
+import { walkSync } from "../../../deps.ts";
 import { Utils } from "../../../src/core/Utils.ts";
-import { Directory } from "../core/Directory.ts";
 
 /**
  * Pulls the version from a json file.
  */
 export class VersionPuller {
+	private readonly denoConfig = "deno.json";
+
 	/**
 	 * Pulls the version from a json file.
+	 * @param searchDir The directory to search in.
+	 * @param fileName The name of the file to pull the version from.
 	 * @returns The version number.
 	 */
-	public getVersion(fileName: string): string {
-		const denoJsonFilePath = Directory
-			.getFiles("./", "*.*", true)
-			.find(f => f.endsWith(fileName));
+	public getVersion(searchDir: string): string {
+		const entries = walkSync(searchDir, {
+			includeFiles: true,
+			includeDirs: false,
+			exts: [".json"],
+			match: [/.*deno.json.*/gm]
+		});
 
-		if (denoJsonFilePath === undefined) {
-			const errorMsg = `The file '${fileName}' could not be found when pulling the version number.`;
-			Utils.printError(errorMsg);
+		const configFiles = [...entries].map((entry) => entry);
+
+		if (configFiles.length === 0) {
+			const errorMsg = `No '${this.denoConfig}' files found.`;
+			Utils.printNotice(errorMsg);
 			Deno.exit(1);
 		}
 
-		const fileData = Deno.readTextFileSync(denoJsonFilePath);
+		const fileName = configFiles[0].name;
+		const filePath = configFiles[0].path;
+
+		const fileData = Deno.readTextFileSync(filePath);
 		const jsonObj = JSON.parse(fileData);
 
 		// If the object contains a property with the name version

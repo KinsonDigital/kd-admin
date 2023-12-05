@@ -130,12 +130,22 @@ export class Utils {
 	}
 
 	/**
-	 * Prints the given {@link message} as a error.
+	 * Prints the given {@link message} as a GitHub error.
 	 * @param message The message to print.
 	 */
 	public static printError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(message));
+		console.log(chalk.red(`::error::${message}`));
+		Utils.printEmptyLine();
+	}
+
+	/**
+	 * Prints the given {@link message} as a GitHub notice.
+	 * @param message The message to print.
+	 */
+	public static printNotice(message: string): void {
+		Utils.printEmptyLine();
+		console.log(chalk.red(`::notice::${message}`));
 		Utils.printEmptyLine();
 	}
 
