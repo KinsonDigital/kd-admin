@@ -9,8 +9,10 @@ interface Dictionary {
 const compileTargetMonikers: Dictionary = {};
 compileTargetMonikers["win-x64"] = "x86_64-pc-windows-msvc";
 compileTargetMonikers["linux-x64"] = "x86_64-unknown-linux-gnu";
-compileTargetMonikers["mac-x64"] = "x86_64-apple-darwin";
-compileTargetMonikers["mac-arm"] = "aarch64-apple-darwin";
+
+// NOTE: Disabled for now.  macOS support not needed yet.
+// compileTargetMonikers["mac-x64"] = "x86_64-apple-darwin";
+// compileTargetMonikers["mac-arm"] = "aarch64-apple-darwin";
 
 const outputDir = "dist";
 const compileTargetNames = ["all"];
