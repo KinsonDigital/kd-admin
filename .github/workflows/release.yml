@@ -136,6 +136,10 @@ jobs:
             "${{ github.workspace }}/.github/cicd/scripts/compiler.ts" `
             "all";
 
+      - name: List Dist Files
+        working-directory: ${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}
+        run: ls -a
+
       - name: Creating ${{ inputs.release-type }} GitHub Release
         if: ${{ inputs.dry-run == false }}
         uses: softprops/action-gh-release@v1
