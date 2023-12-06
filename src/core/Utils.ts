@@ -123,6 +123,15 @@ export class Utils {
 	}
 
 	/**
+	 * Checks if the given {@link version} is not a valid preview or production version.
+	 * @param version The version to check.
+	 * @returns True if the version is not a valid preview or production version, otherwise false.
+	 */
+	public static isNotValidPreviewOrProdVersion(version: string): boolean {
+		return this.isNotValidPreviewVersion(version) && this.isNotValidProdVersion(version);
+	}
+
+	/**
 	 * Prints an empty line to the console.
 	 */
 	public static printEmptyLine(): void {
