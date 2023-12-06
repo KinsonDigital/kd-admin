@@ -143,9 +143,9 @@ jobs:
           name: "🚀${{ inputs.release-type }} Release - ${{ needs.get_version.outputs.version }}" 
           body_path: "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
           files: |
-            "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli/dist/kdcli-win-x64.zip"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli/dist/kdcli-linux-x64.zip"
+            "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}/Release-Notes-${{ needs.get_version.outputs.version }}.md"
+            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-win-x64.zip"
+            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-linux-x64.zip"
           tag_name: "${{ needs.get_version.outputs.version }}"
           prerelease: ${{ inputs.release-type == 'Preview' }}
           draft: false
