@@ -1,7 +1,8 @@
 import { CLI } from "../../../src/core/CLI.ts";
+import { ActualTarget } from "../core/types.ts";
 
 interface Dictionary {
-	[key: string]: string;
+	[key: string]: ActualTarget;
 }
 
 // Create an object whose property name is the same as the type name
