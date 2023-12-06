@@ -1,9 +1,12 @@
 {
 	"cSpell.words": [
 		"aarch",
+		"cicd",
 		"kdcli",
 		"Kinson",
-		"msvc"
+		"LOCALAPPDATA",
+		"msvc",
+		"setx"
 	],
 	"files.exclude": {
 		"**/.git": true,
