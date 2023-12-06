@@ -111,6 +111,7 @@
 				"run",
 				"--inspect-wait",
 				"--allow-read",
+				"--allow-write",
 				"--allow-run",
 			],
 			"args": [
