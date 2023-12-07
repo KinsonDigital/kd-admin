@@ -138,7 +138,9 @@ jobs:
 
       - name: List Dist Files
         working-directory: ${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}
-        run: ls -a
+        run: |
+          ls -a
+          curl --help
 
       - name: Creating ${{ inputs.release-type }} GitHub Release
         if: ${{ inputs.dry-run == false }}
@@ -147,7 +149,7 @@ jobs:
           name: "🚀${{ inputs.release-type }} Release - ${{ needs.get_version.outputs.version }}" 
           body_path: "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
           files: |
-            "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}/Release-Notes-${{ needs.get_version.outputs.version }}.md"
+            "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
             "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-win-x64.zip"
             "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-linux-x64.zip"
           tag_name: "${{ needs.get_version.outputs.version }}"
