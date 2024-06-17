@@ -1,8 +1,6 @@
 import { Select, TagClient } from "../../../deps.ts";
 import { AppInstaller } from "../core/AppInstaller.ts";
 
-// TODO: Bring in chalk to improve console output
-// TODO: Ask the user using cliffy which version to install
 
 const isInteractive = Deno.args.length <= 0;
 
