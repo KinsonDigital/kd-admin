@@ -1,21 +1,41 @@
 import { RepoClient, TagClient, UsersClient } from "../../../deps.ts";
 import { Utils } from "../../../src/core/Utils.ts";
 
-if (Deno.args.length != 5) {
-	let errorMsg = `The required number of arguments is 5 but only ${Deno.args.length}.`;
-	errorMsg += `\nPlease provide the following arguments: version, owner name, repo name, and token.`;
+const ownerName = (Deno.env.get("OWNER_NAME") ?? "").trim();
+
+if (ownerName === "") {
+	const errorMsg = `The 'OWNER_NAME' environment variable is required.`;
 	Utils.printError(errorMsg);
 	Deno.exit(1);
 }
 
-const ownerName = Deno.args[0].trim();
-const repoName = Deno.args[1].trim();
-const versionType = Deno.args[2].trim().toLowerCase();
+const repoName = (Deno.env.get("REPO_NAME") ?? "").trim();
 
-let version = Deno.args[3].trim().toLowerCase();
+if (repoName === "") {
+	const errorMsg = `The 'REPO_NAME' environment variable is required.`;
+	Utils.printError(errorMsg);
+	Deno.exit(1);
+}
+
+const versionType = (Deno.env.get("VERSION_TYPE") ?? "").trim().toLowerCase();
+
+if (versionType === "") {
+	const errorMsg = `The 'VERSION_TYPE' environment variable is required.`;
+	Utils.printError(errorMsg);
+	Deno.exit(1);
+}
+
+let version = (Deno.env.get("VERSION") ?? "").trim().toLowerCase();
+
+if (version === "") {
+	const errorMsg = `The 'VERSION' environment variable is required.`;
+	Utils.printError(errorMsg);
+	Deno.exit(1);
+}
+
 version = version.startsWith("v") ? version : `v${version}`;
 
-const token = Deno.args[4].trim();
+const token = (Deno.env.get("GITHUB_TOKEN") ?? "").trim();
 
 const userCLient: UsersClient = new UsersClient(ownerName, repoName, token);
 

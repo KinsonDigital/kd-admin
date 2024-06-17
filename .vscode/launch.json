@@ -124,6 +124,10 @@
 			"type": "node",
 			"program": "${workspaceFolder}/.github/cicd/scripts/check-release-notes.ts",
 			"cwd": "${workspaceFolder}",
+			"env": {
+				"RELEASE_TYPE": "Preview",
+				"VERSION": "v1.0.0-preview.1"
+			},
 			"windows": {
 				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
 			},
@@ -132,12 +136,9 @@
 			},
 			"runtimeArgs": [
 				"run",
-				"--inspect-wait",
+				"--allow-env",
 				"--allow-read",
-			],
-			"args": [
-				"preview",
-				"v1.0.0-preview.1",
+				"--inspect-wait",
 			],
 			"attachSimplePort": 9229,
 		}

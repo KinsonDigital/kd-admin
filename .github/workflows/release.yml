@@ -81,28 +81,25 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Version Does Not Exist
+        env:
+          OWNER_NAME: "${{ vars.ORGANIZATION_NAME }}"
+          REPO_NAME: "${{ vars.PROJECT_NAME }}"
+          VERSION_TYPE: "${{ inputs.release-type }}"
+          VERSION: "${{ needs.get_version.outputs.version }}"
+          GITHUB_TOKEN: "${{ secrets.CICD_TOKEN }}"
         run: |
           $scriptPath = "${{ github.workspace }}/.github/cicd/scripts/version-checker.ts";
 
-          deno run `
-            --allow-net `
-            --allow-read `
-            "$scriptPath" `
-            "${{ vars.ORGANIZATION_NAME }}" `
-            "${{ vars.PROJECT_NAME }}" `
-            "${{ inputs.release-type }}" `
-            "${{ needs.get_version.outputs.version }}" `
-            "${{ secrets.CICD_TOKEN }}";
+          deno run --allow-env --allow-net --allow-read "$scriptPath";
 
       - name: Release Notes Exist
+        env:
+          RELEASE_TYPE: "${{ inputs.release-type }}"
+          VERSION: "${{ needs.get_version.outputs.version }}"
         run: |
           $scriptPath = "${{ github.workspace }}/.github/cicd/scripts/check-release-notes.ts";
 
-          deno run `
-            --allow-read `
-            "$scriptPath" `
-            "${{ inputs.release-type }}" `
-            "${{ needs.get_version.outputs.version }}";
+          deno run --allow-env --allow-read "$scriptPath";
 
 
   release:
@@ -119,7 +116,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Build
-        run: deno run --allow-read --allow-run ./.github/cicd/scripts/deno-check.ts
+        run: deno run --allow-read --allow-run ./.github/cicd/scripts/deno-build.ts
 
       - name: Run Lint
         run: deno lint
@@ -127,34 +124,36 @@ jobs:
       - name: Run Tests
         run: deno test --allow-read ./tests/*Tests.ts;
 
-      - name: Compile To All Targets
-        run: |
-          deno run `
-            --allow-read `
-            --allow-write `
-            --allow-run `
-            "${{ github.workspace }}/.github/cicd/scripts/compiler.ts" `
-            "all";
-
-      - name: List Dist Files
-        working-directory: ${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}
-        run: |
-          ls -a
-          curl --help
-
-      - name: Creating ${{ inputs.release-type }} GitHub Release
+      - name: Create GitHub Release ${{ inputs.dry-run == true && '(Dry Run)' || '' }}
         if: ${{ inputs.dry-run == false }}
-        uses: softprops/action-gh-release@v2
-        with: 
-          name: "🚀${{ inputs.release-type }} Release - ${{ needs.get_version.outputs.version }}" 
-          body_path: "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
-          files: |
-            "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-win-x64.zip"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-linux-x64.zip"
-          tag_name: "${{ needs.get_version.outputs.version }}"
-          prerelease: ${{ inputs.release-type == 'Preview' }}
-          draft: false
+        env:
+          GH_TOKEN: ${{ secrets.CICD_TOKEN }}
+        run: |
+          $ownerRepoName = "${{ github.repository }}";
+
+          $tag = "${{ needs.get_version.outputs.version }}".ToLower().Trim();
+          $tag = $tag.StartsWith("v") ? $tag : "v$tag";
+
+          $releaseType = "${{ inputs.release-type }}";
+          $version = "${{ needs.get_version.outputs.version }}";
+
+          $title = "$releaseType Release - $version";
+
+          $releaseDirPrefix = $releaseType.ToLower();
+          $releaseTypeDir = "$releaseDirPrefix-releases";
+          $fullReleaseNotesPath = "${{ github.workspace }}/release-notes/$releaseTypeDir/${{ needs.get_version.outputs.version }}.md";
+
+          $isPreRelease = $releaseType -eq "Preview" ? "--prerelease" : "";
+
+          Write-Host "::notice::Release Notes File Path: $fullReleaseNotesPath";
+
+          gh release create $tag `
+            -R $ownerRepoName `
+            --target ${{ github.ref_name }} `
+            -t $title `
+            -F $fullReleaseNotesPath `
+            $isPreRelease `
+            $fullReleaseNotesPath;
 
       - name: Close Milestone ${{ needs.get_version.outputs.version }}
         if: ${{ inputs.dry-run == false }}

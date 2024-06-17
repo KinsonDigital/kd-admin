@@ -1,15 +1,21 @@
 import { walkSync } from "../../../deps.ts";
-import { Utils } from "../../../src/core/Utils.ts";
+import { Utils } from "core/Utils.ts";
 
-if (Deno.args.length != 2) {
-	let errorMsg = `The required number of arguments is 2 but received ${Deno.args.length}.`;
-	errorMsg += `\nPlease provide the following arguments: version type, version.`;
-	Utils.printError(errorMsg);
-	Deno.exit(100);
+const scriptFileName = new URL(import.meta.url).pathname.split("/").pop();
+
+const versionType = (Deno.env.get("RELEASE_TYPE") ?? "").trim().toLowerCase();
+
+if (versionType === "") {
+	Utils.printError(`The 'RELEASE_TYPE' environment variable is require.\n\tFileName: ${scriptFileName}`);
+	Deno.exit(1);
 }
 
-const versionType = Deno.args[0].trim().toLowerCase();
-let version = Deno.args[1].trim().toLowerCase();
+let version = (Deno.env.get("VERSION") ?? "").trim().toLowerCase();
+
+if (version === "") {
+	Utils.printError(`The 'VERSION' environment variable is require.\n\tFileName: ${scriptFileName}`);
+	Deno.exit(2);
+}
 
 if (versionType != "production" && versionType != "preview") {
 	Utils.printError(`The version type must be either 'preview' or 'release' but received '${versionType}'.`);
@@ -26,21 +32,21 @@ if (versionType === "preview") {
 		Deno.exit(300);
 	}
 
-	releaseNotesDirName = "PreviewReleases";
+	releaseNotesDirName = "preview-releases";
 } else if (versionType === "production") {
 	if (Utils.isNotValidProdVersion(version)) {
 		Utils.printError(`The production version '${version}' is not valid.`);
 		Deno.exit(400);
 	}
 
-	releaseNotesDirName = "ProductionReleases";
+	releaseNotesDirName = "production-releases";
 }
 
 const searchDir = Deno.cwd().trim();
 
 console.log(`Search Directory: ${searchDir}`);
 
-const releaseNotesFileName = `Release-Notes-${version}.md`;
+const releaseNotesFileName = `${version}.md`;
 
 const entries = walkSync(searchDir, {
 	includeFiles: true,
@@ -51,12 +57,12 @@ const entries = walkSync(searchDir, {
 
 const configFiles = [...entries]
 	.filter((entry) => {
-		return entry.path.includes("ReleaseNotes") && entry.path.includes(releaseNotesDirName);
+		return entry.path.includes("release-notes") && entry.path.includes(releaseNotesDirName);
 	})
 	.map((entry) => entry);
 
 if (configFiles.length === 0) {
 	const errorMsg = `The release notes '${releaseNotesFileName}' file could not be found.`;
-	Utils.printNotice(errorMsg);
+	Utils.printError(errorMsg);
 	Deno.exit(1);
 }
