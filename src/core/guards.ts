@@ -64,7 +64,7 @@ export class Guards {
 	 * @param func The value to check.
 	 * @returns True if the value is a function, otherwise false.
 	 */
-	public static isFunction(func: unknown): func is Function {
+	public static isFunction(func: unknown): func is (...args: unknown[]) => unknown {
 		return typeof func === 'function';
 	}
 	
@@ -73,7 +73,7 @@ export class Guards {
 	 * @param func The value to check.
 	 * @returns True if the value is not a function, otherwise false.
 	 */
-	public static isNotFunction(func: unknown): func is Function {
+	public static isNotFunction(func: unknown): func is (...args: unknown[]) => unknown {
 		return !this.isFunction(func);
 	}
 
@@ -91,7 +91,7 @@ export class Guards {
 	 * @param value The value to check.
 	 * @returns True if the value is undefined, null, or an empty string or array, otherwise false.
 	 */
-	public static isUndefinedOrNullOrEmpty(value: any | string | []): value is undefined | null | "" {
+	public static isUndefinedOrNullOrEmpty(value: unknown | string | []): value is undefined | null | "" {
 		if (typeof value === "string") {
 			return this.isEmpty(value);
 		} else if (Array.isArray(value)) {
