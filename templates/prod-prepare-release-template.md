@@ -1,4 +1,5 @@
 ### Pre-Release ToDo List
+```[tasklist]
 - [ ] All issues in the assigned milestone are closed, and all issue tasks are complete.
 - [ ] Add _**`🚀production-release`**_ label to this pull request.
 - [ ] The pull request is assigned to a project.
@@ -8,9 +9,12 @@
 - [ ] Manual QA Testing completed _(if applicable)_.
 - [ ] Release to **_production_** completed. _(The release is performed by running the `🚀Release` workflow)_.
 - [ ] Reusable workflow version references have been updated for the upcoming release.
+```
 
 ### Post-Release ToDo List
+```[tasklist]
 - [ ] The GitHub release has been created and is correct.
+```
 
 ### Additional Information:
 
