@@ -76,6 +76,17 @@ export class ParamGuards {
 	}
 
 	/**
+	 * Checks if the {@link value} is a valid number that is less than one.
+	 * @param value The number to check.
+	 * @throws {Error} If the {@link value} is less than one.
+	 */
+	public static isLessThanOne(value: number) {
+		if (Guards.isLessThanOne(value)) {
+			throw new Error("The PR number must be greater than zero.");
+		}
+	}
+
+	/**
 	 * Throws an error if the given {@link value} is an empty string or array.
 	 * @param value The value to check.
 	 * @throws {Error} If the {@link value} is an empty string or array.

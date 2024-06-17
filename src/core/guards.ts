@@ -138,19 +138,21 @@ export class Guards {
 	}
 
 	/**
-	 * Checks if a variable value is null or undefined.
+	 * Checks if the given {@link value} is a number and is less than one.
 	 * @param value The value to check.
 	 * @param paramName The name of the parameter that is being checked.
 	 */
-	public static isLessThanOne(value: undefined | null | number): void {
+	public static isLessThanOne(value: undefined | null | number): value is number {
 		const isNullOrUndefined = value === undefined || value === null;
 		if (isNullOrUndefined || isNaN(value) || !isFinite(value)) {
-			throw new Error("The value is undefined, null, NaN, Infinite, -Infinity.");
+			return false;
 		}
 
 		if (value < 1) {
-			throw new Error("The value is less than or equal to zero.");
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
