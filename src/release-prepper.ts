@@ -17,12 +17,33 @@ import { GeneratorSettings } from "./generator-settings.ts";
  */
 export class ReleasePrepper {
 	private readonly settings: PrepareReleaseSettings
+	private readonly ownerName: string;
+	private readonly repoName: string;
+	private readonly token: string;
+	private readonly prClient: PullRequestClient;
+	private readonly repoClient: RepoClient;
+	private readonly labelClient: LabelClient;
+	private readonly projectClient: ProjectClient;
+	private readonly milestoneClient: MilestoneClient;
+	private readonly tagClient: TagClient;
+	private readonly orgClient: OrgClient;
 
 	/**
 	 * Creates a new instance of the {@link ReleasePrepper} class.
 	 */
 	constructor() {
 		this.settings = this.getSettings();
+		this.ownerName = this.settings.ownerName;
+		this.repoName = this.settings.repoName;
+		this.token = (Deno.env.get(this.settings.githubTokenEnvVarName) ?? "").trim();
+
+		this.repoClient = new RepoClient(this.ownerName, this.repoName, this.token);
+		this.prClient = new PullRequestClient(this.settings.ownerName, this.settings.repoName, this.token);
+		this.labelClient = new LabelClient(this.settings.ownerName, this.settings.repoName, this.token);
+		this.projectClient = new ProjectClient(this.settings.ownerName, this.settings.repoName, this.token);
+		this.milestoneClient = new MilestoneClient(this.settings.ownerName, this.settings.repoName, this.token);
+		this.tagClient = new TagClient(this.settings.ownerName, this.settings.repoName, this.token);
+		this.orgClient = new OrgClient(this.settings.ownerName, this.token);
 	}
 	
 	public async prepareForRelease(): Promise<void> {
@@ -30,10 +51,6 @@ export class ReleasePrepper {
 		
 		const ownerName = settings.ownerName;
 		const repoName = settings.repoName;
-		const token = (Deno.env.get(settings.githubTokenEnvVarName) ?? "").trim();
-
-		const prClient = new PullRequestClient(ownerName, repoName, token);
-		const milestoneClient = new MilestoneClient(ownerName, repoName, token);
 
 		const releaseTypeNames = settings.releaseTypes.map((type: ReleaseType) => type.name);
 
@@ -52,7 +69,7 @@ export class ReleasePrepper {
 
 		const chosenVersion = await this.getAndValidateVersion();
 
-		const repoDoesNotExist = !(await this.repoExists());
+		const repoDoesNotExist = !(await this.repoClient.exists());
 
 		if (repoDoesNotExist) {
 			const errorMsg = `The repository '${ownerName}/${repoName}' does not exist.`;
@@ -98,7 +115,7 @@ export class ReleasePrepper {
 		// If an reviewer was selected, assign the pr to the selected reviewer
 		if (prReviewer !== undefined) {
 			console.log(crayon.lightBlack(`   ⏳Setting pr reviewer to '${prReviewer}'.`));
-			await prClient.requestReviewers(prNumber, prReviewer);
+			await this.prClient.requestReviewers(prNumber, prReviewer);
 		} else {
 			const errorMsg = `A reviewer has not been chosen. The pr will be left unassigned.`;
 			console.log(crayon.lightYellow(`⚠️${errorMsg}⚠️`));	
@@ -129,13 +146,13 @@ export class ReleasePrepper {
 		}
 		
 		// Assignee milestone to the pr
-		const milestone = await milestoneClient.getMilestoneByName(chosenVersion);
+		const milestone = await this.milestoneClient.getMilestoneByName(chosenVersion);
 		const prData: IssueOrPRRequestData = {
 			milestone: milestone.number
 		};
 		
 		console.log(crayon.lightBlack(`   ⏳Assigning pr to milestone '${chosenVersion}'.`));
-		await prClient.updatePullRequest(prNumber, prData);
+		await this.prClient.updatePullRequest(prNumber, prData);
 		
 		const prUrl = `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 		console.log(crayon.lightGreen(`\nPull Request: ${prUrl}`));
@@ -300,16 +317,6 @@ export class ReleasePrepper {
 		return true;
 	}
 
-	/**
-	 * Returns a value indicating if the repository exists.
-	 * @returns True if the repository exists; otherwise, false.
-	 */
-	private async repoExists(): Promise<boolean> {
-		const repoClient = new RepoClient(this.settings.ownerName, this.settings.repoName, this.settings.githubTokenEnvVarName);
-
-		return await repoClient?.exists() ?? false;
-	}
-
 	private async getAndValidateVersion(): Promise<string> {
 		let chosenVersion = "";
 
@@ -330,10 +337,7 @@ export class ReleasePrepper {
 				transform: (value) => value.startsWith("v") ? value : `v${value}`.trim(),
 			});
 
-			const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-			const tagClient = new TagClient(this.settings.ownerName, this.settings.repoName, token);
-
-			const tags = (await tagClient.getAllTags()).map((tag) => tag.name.trim());
+			const tags = (await this.tagClient.getAllTags()).map((tag) => tag.name.trim());
 			
 			if (tags.includes(chosenVersion)) {
 				const errorMsg = `The version '${chosenVersion}' already exists.`;
@@ -460,10 +464,8 @@ export class ReleasePrepper {
 		
 		let selectedAssignee = "";
 		
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const orgClient = new OrgClient(this.settings.ownerName, token);
 		console.log(crayon.lightBlack("   ⏳Fetching org members"));
-		const allOrgMembers = await orgClient.getAllOrgMembers();
+		const allOrgMembers = await this.orgClient.getAllOrgMembers();
 		
 		if (selectedAssignType === "org members only") {
 			const memberNames = allOrgMembers.map((member) => member.login);
@@ -524,10 +526,8 @@ export class ReleasePrepper {
 		
 		let selectedAssignee = "";
 		
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const orgClient = new OrgClient(this.settings.ownerName, token);
 		console.log(crayon.lightBlack("   ⏳Fetching org members"));
-		const allOrgMembers = await orgClient.getAllOrgMembers();
+		const allOrgMembers = await this.orgClient.getAllOrgMembers();
 		
 		if (selectedAssignType === "org members only") {
 			const memberNames = allOrgMembers.map((member) => member.login);
@@ -597,9 +597,7 @@ export class ReleasePrepper {
 			return [true, []];
 		}
 
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const labelClient = new LabelClient(this.settings.ownerName, this.settings.repoName, token);
-		const repoLabels = await labelClient.getAllLabels();
+		const repoLabels = await this.labelClient.getAllLabels();
 
 		const invalidLabels = labels.filter((ignoreLabel) => {
 			return !repoLabels.some((label) => label.name === ignoreLabel);
@@ -611,18 +609,13 @@ export class ReleasePrepper {
 	private async projectExists(orgProject: string): Promise<boolean> {
 		console.log(crayon.lightBlack(`   ⏳Validating project '${orgProject}'.`));
 
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const projectClient = new ProjectClient(this.settings.ownerName, this.settings.repoName, token);
-		return (await projectClient.getOrgProjects()).find((p) => p.title === orgProject) !== undefined;
+		return (await this.projectClient.getOrgProjects()).find((p) => p.title === orgProject) !== undefined;
 	}
 
 	private async milestoneExists(chosenVersion: string): Promise<boolean> {
 		console.log(crayon.lightBlack(`   ⏳Validating milestone '${chosenVersion}'.`));
 
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const milestoneClient = new MilestoneClient(this.settings.ownerName, this.settings.repoName, token);
-
-		return await milestoneClient.milestoneExists(chosenVersion);
+		return await this.milestoneClient.milestoneExists(chosenVersion);
 	}
 
 	/**
@@ -664,10 +657,8 @@ export class ReleasePrepper {
 		const prTemplate = Deno.readTextFileSync(templateFilePath);
 		const title = releaseType.prTitle.replace("${VERSION}", chosenVersion);
 
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const prClient = new PullRequestClient(this.settings.ownerName, this.settings.repoName, token);
 		// Create a release pr
-		const newPr = await prClient.createPullRequest(
+		const newPr = await this.prClient.createPullRequest(
 			title,
 			releaseType.headBranch,
 			releaseType.baseBranch,
@@ -684,10 +675,7 @@ export class ReleasePrepper {
 		
 		console.log(crayon.lightBlack(`   ⏳Setting pr assignee.`));
 
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const prClient = new PullRequestClient(this.settings.ownerName, this.settings.repoName, token);
-
-		await prClient.updatePullRequest(prNumber, prData);
+		await this.prClient.updatePullRequest(prNumber, prData);
 	}
 
 	private async setLabels(prNumber: number, labels: string[]): Promise<void> {
@@ -697,17 +685,11 @@ export class ReleasePrepper {
 		
 		console.log(crayon.lightBlack(`   ⏳Setting pr labels.`));
 
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const prClient = new PullRequestClient(this.settings.ownerName, this.settings.repoName, token);
-
-		await prClient.updatePullRequest(prNumber, prData);
+		await this.prClient.updatePullRequest(prNumber, prData);
 	}
 
 	private async getProject(): Promise<string> {
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const projClient = new ProjectClient(this.settings.ownerName, this.settings.repoName, token);
-
-		const orgProjects = (await projClient.getOrgProjects()).map((proj) => proj.title);
+		const orgProjects = (await this.projectClient.getOrgProjects()).map((proj) => proj.title);
 
 		const orgProject = await Select.prompt({
 			message: "Choose a GitHub organization project",
@@ -726,12 +708,9 @@ export class ReleasePrepper {
 	}
 
 	private async assignToProject(prNumber: number, project: string): Promise<void> {
-		const token = Deno.env.get(this.settings.githubTokenEnvVarName) ?? "";
-		const projectClient = new ProjectClient(this.settings.ownerName, this.settings.repoName, token);
-
 		console.log(crayon.lightBlack(`   ⏳Assigning pr to project '${project}'.`));
 
-		await projectClient.addPullRequestToProject(prNumber, project);
+		await this.projectClient.addPullRequestToProject(prNumber, project);
 	}
 }
 
