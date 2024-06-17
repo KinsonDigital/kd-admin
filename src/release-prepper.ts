@@ -1,12 +1,18 @@
-import { PullRequestClient, TagClient, LabelClient, MilestoneClient,
-	OrgClient, ProjectClient, RepoClient,
-	existsSync
- } from "../deps.ts";
+import {
+	existsSync,
+	LabelClient,
+	MilestoneClient,
+	OrgClient,
+	ProjectClient,
+	PullRequestClient,
+	RepoClient,
+	TagClient,
+} from "../deps.ts";
 import { Input, Select } from "../deps.ts";
 import { crayon } from "../deps.ts";
 import { IssueOrPRRequestData } from "../deps.ts";
 import runAsync from "core/run-async.ts";
-import { Guards, } from "core/guards.ts";
+import { Guards } from "core/guards.ts";
 import { PrepareReleaseSettings } from "./prepare-release-settings.ts";
 import { ReleaseType } from "./release-type.ts";
 import { ReleaseNotesGenerator } from "./release-notes-generator.ts";
@@ -16,7 +22,7 @@ import { GeneratorSettings } from "./generator-settings.ts";
  * Prepares for a release by creating various branches, release notes, and a pr.
  */
 export class ReleasePrepper {
-	private readonly settings: PrepareReleaseSettings
+	private readonly settings: PrepareReleaseSettings;
 	private readonly ownerName: string;
 	private readonly repoName: string;
 	private readonly token: string;
@@ -45,20 +51,20 @@ export class ReleasePrepper {
 		this.tagClient = new TagClient(this.settings.ownerName, this.settings.repoName, this.token);
 		this.orgClient = new OrgClient(this.settings.ownerName, this.token);
 	}
-	
+
 	public async prepareForRelease(): Promise<void> {
 		const settings: PrepareReleaseSettings = this.getSettings();
-		
+
 		const ownerName = settings.ownerName;
 		const repoName = settings.repoName;
 
 		const releaseTypeNames = settings.releaseTypes.map((type: ReleaseType) => type.name);
 
-		const chosenTypeName = (await Select.prompt<string>({
+		const chosenTypeName = await Select.prompt<string>({
 			message: "Please choose the type of release",
 			options: releaseTypeNames,
-		}));
-		
+		});
+
 		const chosenReleaseType = settings.releaseTypes.find((type: ReleaseType) => type.name === chosenTypeName);
 
 		if (chosenReleaseType === undefined) {
@@ -80,21 +86,23 @@ export class ReleasePrepper {
 		this.validatePrTemplate(chosenReleaseType);
 
 		const prReviewer = Guards.isNothing(chosenReleaseType.reviewer) ? await this.getReviewer() : chosenReleaseType.reviewer;
-		
-		const selectedAssignee = Guards.isNothing(chosenReleaseType.assignee) ? await this.getAssignee() : chosenReleaseType.reviewer;
-		
+
+		const selectedAssignee = Guards.isNothing(chosenReleaseType.assignee)
+			? await this.getAssignee()
+			: chosenReleaseType.reviewer;
+
 		const [labelsExist, invalidLabels] = await this.getValidateLabels(chosenReleaseType.releaseLabels);
 
 		if (!labelsExist) {
 			const errorMsg = `The following labels do not exist in the repository:\n` +
-			invalidLabels.map((label) => ` - ${label}`).join("\n") +
-			"\nThe pr labels will be left empty.⚠️";
-		
+				invalidLabels.map((label) => ` - ${label}`).join("\n") +
+				"\nThe pr labels will be left empty.⚠️";
+
 			console.log(crayon.lightRed(errorMsg));
 
 			Deno.exit(1);
 		}
-		
+
 		const orgProject = Guards.isNothing(settings.orgProjectName) ? await this.getProject() : settings.orgProjectName;
 		const orgProjectExists = await this.projectExists(orgProject);
 
@@ -107,37 +115,37 @@ export class ReleasePrepper {
 		}
 
 		await this.createReleaseBranch(chosenReleaseType);
-		
+
 		// Generate the release notes
 		const newNotesFilePath = await this.createReleaseNotes(chosenReleaseType, chosenVersion, settings.githubTokenEnvVarName);
 
 		// If release notes were generated, stage, commit, and push to remote
 		if (newNotesFilePath !== undefined) {
 			await this.stageReleaseNotes(newNotesFilePath);
-			
+
 			await this.commitReleaseNotes(newNotesFilePath, chosenVersion);
-			
+
 			await this.pushToRemote(chosenReleaseType.headBranch);
 		}
 
 		const prNumber = await this.createPullRequest(chosenReleaseType, chosenVersion);
-		
+
 		// If an reviewer was selected, assign the pr to the selected reviewer
 		if (prReviewer !== undefined) {
 			console.log(crayon.lightBlack(`   ⏳Setting pr reviewer to '${prReviewer}'.`));
 			await this.prClient.requestReviewers(prNumber, prReviewer);
 		} else {
 			const errorMsg = `A reviewer has not been chosen. The pr will be left unassigned.`;
-			console.log(crayon.lightYellow(`⚠️${errorMsg}⚠️`));	
+			console.log(crayon.lightYellow(`⚠️${errorMsg}⚠️`));
 		}
 
 		// If an assignee was selected, assign the pr to the selected assignee
 		if (selectedAssignee !== undefined) {
 			await this.setAssignee(prNumber, selectedAssignee);
 		}
-		
-		await this.setLabels(prNumber, chosenReleaseType.releaseLabels)
-		
+
+		await this.setLabels(prNumber, chosenReleaseType.releaseLabels);
+
 		// Assign the pr to the org project
 		if (orgProjectExists) {
 			await this.assignToProject(prNumber, orgProject);
@@ -145,25 +153,25 @@ export class ReleasePrepper {
 			const errorMsg = `The project '${orgProject}' does not exist.  The pr will not be assigned to a project.`;
 			console.log(crayon.lightYellow(`⚠️${errorMsg}⚠️`));
 		}
-		
+
 		// Assignee milestone to the pr
 		const milestone = await this.milestoneClient.getMilestoneByName(chosenVersion);
 		const prData: IssueOrPRRequestData = {
-			milestone: milestone.number
+			milestone: milestone.number,
 		};
-		
+
 		console.log(crayon.lightBlack(`   ⏳Assigning pr to milestone '${chosenVersion}'.`));
 		await this.prClient.updatePullRequest(prNumber, prData);
-		
+
 		const prUrl = `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 		console.log(crayon.lightGreen(`\nPull Request: ${prUrl}`));
 	}
-	
+
 	/**
 	 * Gets the settings if a 'prepare-release-settings.json' file exists in the current working directory.
 	 * @returns The settings.
 	 */
-	private getSettings (): PrepareReleaseSettings {
+	private getSettings(): PrepareReleaseSettings {
 		const settingsFileName = "prepare-release-settings.json";
 		const settingsFilePath = `./${settingsFileName}`;
 
@@ -179,12 +187,12 @@ export class ReleasePrepper {
 
 		if (!this.validSettingsObj(settings)) {
 			const errorMsg = `The settings file '${settingsFileName}' does not have the correct properties.` +
-			"\nThe required settings are:" +
-			"\n\t- repoOwner: string" +
-			"\n\t- repoName: string" +
-			"\n\t- releaseTypes: { name: string, headBranch: string, baseBranch: string }[]" +
-			"\n\t- githubTokenEnvVarName: string";
-			
+				"\nThe required settings are:" +
+				"\n\t- repoOwner: string" +
+				"\n\t- repoName: string" +
+				"\n\t- releaseTypes: { name: string, headBranch: string, baseBranch: string }[]" +
+				"\n\t- githubTokenEnvVarName: string";
+
 			console.log(crayon.red(`❌${errorMsg}`));
 			Deno.exit(1);
 		}
@@ -208,7 +216,6 @@ export class ReleasePrepper {
 			Deno.exit(1);
 		}
 
-
 		return settings;
 	}
 
@@ -217,7 +224,7 @@ export class ReleasePrepper {
 	 * @param settings The settings object to validate.
 	 * @returns True if the settings object is valid; otherwise, false.
 	 */
-	private validSettingsObj (settings: unknown): settings is PrepareReleaseSettings {
+	private validSettingsObj(settings: unknown): settings is PrepareReleaseSettings {
 		if (settings === null || typeof settings !== "object") {
 			return false;
 		}
@@ -246,16 +253,16 @@ export class ReleasePrepper {
 
 		for (let i = 0; i < settingsObj.releaseTypes.length; i++) {
 			const releaseType = settingsObj.releaseTypes[i];
-			
+
 			if (!this.validReleaseTypeObj(releaseType)) {
 				return false;
 			}
 		}
-		
+
 		if (settingsObj.repoName !== undefined && typeof settingsObj.repoName !== "string") {
 			return false;
 		}
-		
+
 		if (settingsObj.orgProjectName !== undefined && typeof settingsObj.orgProjectName !== "string") {
 			return false;
 		}
@@ -268,53 +275,56 @@ export class ReleasePrepper {
 	 * @param releaseType The release type object to validate.
 	 * @returns True if the release type object is valid; otherwise, false.
 	 */
-	private validReleaseTypeObj (releaseType: unknown): releaseType is ReleaseType {
+	private validReleaseTypeObj(releaseType: unknown): releaseType is ReleaseType {
 		if (releaseType === null || typeof releaseType === undefined || typeof releaseType !== "object") {
 			return false;
 		}
-	
+
 		const releaseTypeObj = releaseType as ReleaseType;
-	
+
 		if (Guards.isNothing(releaseTypeObj.name)) {
 			return false;
 		}
-	
+
 		if (Guards.isNothing(releaseTypeObj.headBranch)) {
 			return false;
 		}
-	
+
 		if (Guards.isNothing(releaseTypeObj.baseBranch)) {
 			return false;
 		}
-	
+
 		if (Guards.isNothing(releaseTypeObj.releaseNotesDirPath)) {
 			return false;
 		}
-	
+
 		if (Guards.isNothing(releaseTypeObj.releasePrTemplateFilePath)) {
 			return false;
 		}
-	
+
 		if (Guards.isNothing(releaseTypeObj.releaseLabels)) {
 			return false;
 		}
-	
+
 		if (Guards.isNothing(releaseTypeObj.prTitle)) {
 			return false;
 		}
-	
+
 		if (releaseTypeObj.reviewer !== undefined && typeof releaseTypeObj.reviewer !== "string") {
 			return false;
 		}
-	
+
 		if (releaseTypeObj.assignee !== undefined && typeof releaseTypeObj.assignee !== "string") {
 			return false;
 		}
-	
-		if (releaseTypeObj.genReleaseSettingsFilePath !== undefined && typeof releaseTypeObj.genReleaseSettingsFilePath !== "string") {
+
+		if (
+			releaseTypeObj.genReleaseSettingsFilePath !== undefined &&
+			typeof releaseTypeObj.genReleaseSettingsFilePath !== "string"
+		) {
 			return false;
 		}
-	
+
 		return true;
 	}
 
@@ -322,7 +332,7 @@ export class ReleasePrepper {
 		let chosenVersion = "";
 
 		let versionExists = true;
-		while(versionExists) {
+		while (versionExists) {
 			chosenVersion = await Input.prompt({
 				message: `Please enter a version`,
 				validate: (value) => {
@@ -339,7 +349,7 @@ export class ReleasePrepper {
 			});
 
 			const tags = (await this.tagClient.getAllTags()).map((tag) => tag.name.trim());
-			
+
 			if (tags.includes(chosenVersion)) {
 				const errorMsg = `The version '${chosenVersion}' already exists.`;
 				console.log(crayon.lightRed(errorMsg));
@@ -354,23 +364,25 @@ export class ReleasePrepper {
 
 	private async createReleaseBranch(releaseType: ReleaseType): Promise<void> {
 		const createBranchResult = await runAsync("git", ["checkout", "-B", releaseType.headBranch]);
-		
+
 		if (createBranchResult instanceof Error) {
 			console.log(crayon.lightRed(createBranchResult.message));
 			Deno.exit(1);
 		}
 	}
 
-	private async createReleaseNotes(releaseType: ReleaseType, chosenVersion: string, tokenEnvVarName: string): Promise<string | undefined> {
+	private async createReleaseNotes(
+		releaseType: ReleaseType,
+		chosenVersion: string,
+		tokenEnvVarName: string,
+	): Promise<string | undefined> {
 		console.log(crayon.lightBlack("   ⏳Creating release notes."));
 
 		// Trim the notes dir path and replace all '\' with '/'
 		let notesDirPath = releaseType.releaseNotesDirPath.trim()
 			.replace(/\\/g, "/");
 
-		notesDirPath = notesDirPath.endsWith("/")
-			? notesDirPath.slice(0, -1)
-			: notesDirPath;
+		notesDirPath = notesDirPath.endsWith("/") ? notesDirPath.slice(0, -1) : notesDirPath;
 
 		const settings = this.loadGenNotesSettings(releaseType, chosenVersion, tokenEnvVarName);
 
@@ -394,11 +406,15 @@ export class ReleasePrepper {
 		return newNotesFilePath;
 	}
 
-	private loadGenNotesSettings(releaseType: ReleaseType, version: string, tokenEnvVarName: string): GeneratorSettings | undefined {
+	private loadGenNotesSettings(
+		releaseType: ReleaseType,
+		version: string,
+		tokenEnvVarName: string,
+	): GeneratorSettings | undefined {
 		if (releaseType.genReleaseSettingsFilePath === undefined) {
 			const warningMsg = `The 'genReleaseSettingsFilePath' setting for release type '${releaseType.name}' is not set` +
-			"\nand the 'generate release notes' process will be skipped." + 
-			"\nPlease set the 'genReleaseSettingsFilePath' property in the release type settings.";
+				"\nand the 'generate release notes' process will be skipped." +
+				"\nPlease set the 'genReleaseSettingsFilePath' property in the release type settings.";
 			console.log(crayon.lightYellow(warningMsg));
 
 			return undefined;
@@ -406,8 +422,8 @@ export class ReleasePrepper {
 
 		if (!existsSync(releaseType.genReleaseSettingsFilePath)) {
 			const warningMsg = `The release notes settings file '${releaseType.genReleaseSettingsFilePath}' does not exist.` +
-			"\nand the 'generate release notes' process will be skipped." + 
-			"\nPlease set the 'genReleaseSettingsFilePath' property in the release type settings.";
+				"\nand the 'generate release notes' process will be skipped." +
+				"\nPlease set the 'genReleaseSettingsFilePath' property in the release type settings.";
 			console.log(crayon.lightYellow(warningMsg));
 
 			return undefined;
@@ -425,9 +441,9 @@ export class ReleasePrepper {
 	private async stageReleaseNotes(newNotesFilePath: string): Promise<void> {
 		console.log(crayon.lightBlack("   ⏳Staging release notes."));
 		const stageResult = await runAsync("git", ["add", newNotesFilePath]);
-				
+
 		if (stageResult instanceof Error) {
-			const errorMsg = `There was an error staging the release notes file '${newNotesFilePath}'\n${stageResult.message}.`
+			const errorMsg = `There was an error staging the release notes file '${newNotesFilePath}'\n${stageResult.message}.`;
 			console.log(crayon.lightRed(errorMsg));
 			Deno.exit(1);
 		}
@@ -435,10 +451,15 @@ export class ReleasePrepper {
 
 	private async commitReleaseNotes(newNotesFilePath: string, chosenVersion: string): Promise<void> {
 		console.log(crayon.lightBlack("   ⏳Creating commit."));
-		const createCommitResult = await runAsync("git", ["commit", "-m", `release: create release notes for version ${chosenVersion}`]);
-				
+		const createCommitResult = await runAsync("git", [
+			"commit",
+			"-m",
+			`release: create release notes for version ${chosenVersion}`,
+		]);
+
 		if (createCommitResult instanceof Error) {
-			const errorMsg = `There was an error committing the release notes file '${newNotesFilePath}'\n${createCommitResult.message}.`
+			const errorMsg =
+				`There was an error committing the release notes file '${newNotesFilePath}'\n${createCommitResult.message}.`;
 			console.log(crayon.lightRed(errorMsg));
 			Deno.exit(1);
 		}
@@ -455,55 +476,55 @@ export class ReleasePrepper {
 	}
 
 	private async getReviewer(): Promise<string | undefined> {
-				type AssignInputType = "manual" | "org members only" | "ignore";
+		type AssignInputType = "manual" | "org members only" | "ignore";
 		const assignOptions: AssignInputType[] = ["org members only", "manual", "ignore"];
-		
-		const selectedAssignType = <AssignInputType>(await Select.prompt({
+
+		const selectedAssignType = <AssignInputType> (await Select.prompt({
 			message: "Choose the type of reviewer member",
 			options: assignOptions,
 		}));
-		
+
 		let selectedAssignee = "";
-		
+
 		console.log(crayon.lightBlack("   ⏳Fetching org members"));
 		const allOrgMembers = await this.orgClient.getAllOrgMembers();
-		
+
 		if (selectedAssignType === "org members only") {
 			const memberNames = allOrgMembers.map((member) => member.login);
-		
+
 			selectedAssignee = await Select.prompt({
 				message: "Choose an assignee",
 				options: memberNames,
 				search: true,
 				validate: (loginName) => {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
-		
+
 					if (memberExists === undefined) {
 						console.log(crayon.lightRed("The assignee (github login) does not exist."));
 						return false;
 					}
-		
+
 					return true;
-				}
+				},
 			});
 		} else if (selectedAssignType === "manual") {
 			selectedAssignee = await Input.prompt({
 				message: "Enter the GitHub login name",
 				validate: (loginName) => {
 					loginName = loginName.trim();
-		
+
 					if (loginName.length <= 0) {
 						console.log(crayon.lightRed("The assignee cannot be empty."));
 						return false;
 					}
-		
+
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
-		
+
 					if (memberExists === undefined) {
 						console.log(crayon.lightRed("The assignee (github login) does not exist."));
 						return false;
 					}
-		
+
 					return true;
 				},
 				transform: (value) => value.trim(),
@@ -513,59 +534,58 @@ export class ReleasePrepper {
 		}
 
 		return selectedAssignee;
-
 	}
 
 	private async getAssignee(): Promise<string | undefined> {
 		type AssignInputType = "manual" | "org members only" | "ignore";
 		const assignOptions: AssignInputType[] = ["org members only", "manual", "ignore"];
-		
-		const selectedAssignType = <AssignInputType>(await Select.prompt({
+
+		const selectedAssignType = <AssignInputType> (await Select.prompt({
 			message: "Choose the type of assignee member",
 			options: assignOptions,
 		}));
-		
+
 		let selectedAssignee = "";
-		
+
 		console.log(crayon.lightBlack("   ⏳Fetching org members"));
 		const allOrgMembers = await this.orgClient.getAllOrgMembers();
-		
+
 		if (selectedAssignType === "org members only") {
 			const memberNames = allOrgMembers.map((member) => member.login);
-		
+
 			selectedAssignee = await Select.prompt({
 				message: "Choose an assignee",
 				options: memberNames,
 				search: true,
 				validate: (loginName) => {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
-		
+
 					if (memberExists === undefined) {
 						console.log(crayon.lightRed("The assignee (github login) does not exist."));
 						return false;
 					}
-		
+
 					return true;
-				}
+				},
 			});
 		} else if (selectedAssignType === "manual") {
 			selectedAssignee = await Input.prompt({
 				message: "Enter the GitHub login name",
 				validate: (loginName) => {
 					loginName = loginName.trim();
-		
+
 					if (loginName.length <= 0) {
 						console.log(crayon.lightRed("The assignee cannot be empty."));
 						return false;
 					}
-		
+
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
-		
+
 					if (memberExists === undefined) {
 						console.log(crayon.lightRed("The assignee (github login) does not exist."));
 						return false;
 					}
-		
+
 					return true;
 				},
 				transform: (value) => value.trim(),
@@ -605,7 +625,7 @@ export class ReleasePrepper {
 		});
 
 		return [!(invalidLabels.length > 0), invalidLabels];
-	};
+	}
 
 	private async projectExists(orgProject: string): Promise<boolean> {
 		console.log(crayon.lightBlack(`   ⏳Validating project '${orgProject}'.`));
@@ -630,7 +650,7 @@ export class ReleasePrepper {
 
 		if (templateDoesNotExist) {
 			const errorMsg = `The pr template file '${releaseType.releasePrTemplateFilePath}' does not exist.` +
-			`\nCreate a template file with the name '${releaseType.releasePrTemplateFilePath}' in the working directory.`;
+				`\nCreate a template file with the name '${releaseType.releasePrTemplateFilePath}' in the working directory.`;
 			console.log(crayon.lightRed(errorMsg));
 			Deno.exit(0);
 		}
@@ -643,9 +663,7 @@ export class ReleasePrepper {
 		let templateFilePath = releaseType.releasePrTemplateFilePath.trim()
 			.replace(/\\/g, "/");
 
-		templateFilePath = templateFilePath.endsWith("/")
-			? templateFilePath.slice(0, -1)
-			: templateFilePath;
+		templateFilePath = templateFilePath.endsWith("/") ? templateFilePath.slice(0, -1) : templateFilePath;
 
 		const templateDoesNotExist = !(existsSync(templateFilePath, { isFile: true }));
 
@@ -673,7 +691,7 @@ export class ReleasePrepper {
 		const prData: IssueOrPRRequestData = {
 			assignees: [assignee],
 		};
-		
+
 		console.log(crayon.lightBlack(`   ⏳Setting pr assignee.`));
 
 		await this.prClient.updatePullRequest(prNumber, prData);
@@ -683,7 +701,7 @@ export class ReleasePrepper {
 		const prData: IssueOrPRRequestData = {
 			labels: labels,
 		};
-		
+
 		console.log(crayon.lightBlack(`   ⏳Setting pr labels.`));
 
 		await this.prClient.updatePullRequest(prNumber, prData);
@@ -714,4 +732,3 @@ export class ReleasePrepper {
 		await this.projectClient.addPullRequestToProject(prNumber, project);
 	}
 }
-

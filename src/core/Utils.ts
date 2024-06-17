@@ -169,7 +169,7 @@ export class Utils {
 	public static buildPullRequestUrl(ownerName: string, repoName: string, prNumber: number): string {
 		ParamGuards.isNothing(ownerName);
 		ParamGuards.isNothing(repoName);
-		ParamGuards.isLessThanOne(prNumber)
+		ParamGuards.isLessThanOne(prNumber);
 
 		return `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 	}

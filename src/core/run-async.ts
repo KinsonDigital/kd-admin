@@ -13,7 +13,7 @@ export default async function runAsync(app: string, args: string[]): Promise<str
 		Deno.exit(1);
 	}
 
- 	const cmd = new Deno.Command(app, { args: args, stdout: "piped", stderr: "piped" });
+	const cmd = new Deno.Command(app, { args: args, stdout: "piped", stderr: "piped" });
 
 	const child = cmd.spawn();
 
@@ -26,4 +26,4 @@ export default async function runAsync(app: string, args: string[]): Promise<str
 	} else {
 		return new Error(errorMsg);
 	}
-};
+}

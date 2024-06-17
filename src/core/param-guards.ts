@@ -121,7 +121,7 @@ export class ParamGuards {
 			throw new Error(msg);
 		}
 	}
-	
+
 	/**
 	 * Throws an error if the given {@link value} is not a function.
 	 * @param value The value to check.

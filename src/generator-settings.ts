@@ -9,7 +9,7 @@ export interface GeneratorSettings {
 	headerText: string;
 	version?: string;
 	environment?: string;
-	extraInfo?: { title: string, text: string };
+	extraInfo?: { title: string; text: string };
 	emojisToRemoveFromTitle?: string[];
 	issueCategoryLabelMappings?: Record<string, string>;
 	prCategoryLabelMappings?: Record<string, string>;

@@ -36,7 +36,7 @@ export class Guards {
 	public static isNotNull(value: unknown): value is null {
 		return !this.isNull(value);
 	}
-	
+
 	/**
 	 * Returns a value indicating if the given {@link value} is an empty string or array.
 	 * @param value The value to check.
@@ -64,16 +64,16 @@ export class Guards {
 	 * @param func The value to check.
 	 * @returns True if the value is a function, otherwise false.
 	 */
-	public static isFunction(func: unknown): func is Function {
-		return typeof func === 'function';
+	public static isFunction(func: unknown): func is (...args: unknown[]) => unknown {
+		return typeof func === "function";
 	}
-	
+
 	/**
 	 * Returns a value indicating if the given {@link value} is not a function.
 	 * @param func The value to check.
 	 * @returns True if the value is not a function, otherwise false.
 	 */
-	public static isNotFunction(func: unknown): func is Function {
+	public static isNotFunction(func: unknown): func is (...args: unknown[]) => unknown {
 		return !this.isFunction(func);
 	}
 
@@ -91,7 +91,7 @@ export class Guards {
 	 * @param value The value to check.
 	 * @returns True if the value is undefined, null, or an empty string or array, otherwise false.
 	 */
-	public static isUndefinedOrNullOrEmpty(value: any | string | []): value is undefined | null | "" {
+	public static isUndefinedOrNullOrEmpty(value: unknown | string | []): value is undefined | null | "" {
 		if (typeof value === "string") {
 			return this.isEmpty(value);
 		} else if (Array.isArray(value)) {
@@ -109,7 +109,7 @@ export class Guards {
 	public static isNothing(value: unknown): value is undefined | null | "" {
 		return this.isUndefinedOrNullOrEmpty(value);
 	}
-	
+
 	/**
 	 * Returns true if the given {@link value} is not nothing (undefined, null, or an empty string or array).
 	 * @param value The value to check.
@@ -185,7 +185,7 @@ export class Guards {
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns a value indicating whether or not the given {@link value} starts with a carriage return character.
 	 * @param value The value to check.
@@ -198,7 +198,7 @@ export class Guards {
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns a value indicating whether or not the given {@link value} starts with a new line
 	 * character or a carriage return character.
@@ -225,7 +225,7 @@ export class Guards {
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns a value indicating whether or not the given {@link value} ends with a carriage return character.
 	 * @param value The value to check.
@@ -238,7 +238,7 @@ export class Guards {
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns a value indicating whether or not the given {@link value} ends with a new line
 	 * character or a carriage return character.

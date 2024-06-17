@@ -1,5 +1,5 @@
 import { IssueModel, PullRequestModel } from "../deps.ts";
-import { MilestoneClient, RepoClient, LabelClient } from "../deps.ts";
+import { LabelClient, MilestoneClient, RepoClient } from "../deps.ts";
 import { Guards } from "core/guards.ts";
 import { GeneratorSettings } from "./generator-settings.ts";
 
@@ -10,7 +10,7 @@ export class ReleaseNotesGenerator {
 	private labelClient?: LabelClient = undefined;
 	private milestoneClient?: MilestoneClient = undefined;
 	private repoClient?: RepoClient = undefined;
-	
+
 	/**
 	 * Generates the release notes using the given {@link settings}.
 	 * @param settings The settings to use to generate the release notes.
@@ -48,7 +48,7 @@ export class ReleaseNotesGenerator {
 		// Get all of the issues that do not have any of the labels in the category labels
 		const otherCatIssues = settings.otherCategoryName === undefined
 			? []
-			: issues.filter(issue => issue.labels.every(label => !issueCatLabels.includes(label.name)));
+			: issues.filter((issue) => issue.labels.every((label) => !issueCatLabels.includes(label.name)));
 
 		const otherCat: Record<string, string | undefined> = {};
 		otherCat[settings?.otherCategoryName ?? ""] = undefined;
@@ -74,7 +74,7 @@ export class ReleaseNotesGenerator {
 			const errorMsg = "The 'githubTokenEnvVarName' setting is required and cannot be empty.";
 			throw new Error(errorMsg);
 		}
-		
+
 		const githubToken = Deno.env.get(settings.githubTokenEnvVarName);
 
 		if (githubToken === undefined) {
@@ -127,14 +127,14 @@ export class ReleaseNotesGenerator {
 
 		// Validate the labels in the issue category to label mappings
 		if (settings.issueCategoryLabelMappings !== undefined) {
-			const labelsToCheck = Object.values(settings.issueCategoryLabelMappings).map(l => l.trim());
+			const labelsToCheck = Object.values(settings.issueCategoryLabelMappings).map((l) => l.trim());
 
 			await this.validateLabels("issueCategoryLabelMappings", labelsToCheck);
 		}
 
 		// Validate the labels in the pr category to label mappings
 		if (settings.prCategoryLabelMappings !== undefined) {
-			const labelsToCheck = Object.values(settings.prCategoryLabelMappings).map(l => l.trim());
+			const labelsToCheck = Object.values(settings.prCategoryLabelMappings).map((l) => l.trim());
 
 			await this.validateLabels("prCategoryLabelMappings", labelsToCheck);
 		}
@@ -154,7 +154,7 @@ export class ReleaseNotesGenerator {
 		const invalidLabels: string[] = [];
 		const workItems: Promise<boolean>[] = [];
 
-		labels.forEach(labelToCheck => {
+		labels.forEach((labelToCheck) => {
 			workItems.push(this.labelClient?.labelExists(labelToCheck) ?? Promise.resolve(true));
 		});
 
@@ -167,7 +167,7 @@ export class ReleaseNotesGenerator {
 		}
 
 		//If there are any invalid labels, throw an error
-		if (results.some(i => i === false)) {
+		if (results.some((i) => i === false)) {
 			const errorMsg = `The following '${labelSettingType}' label(s) do not exist:\n   ${invalidLabels.join(", ")}`;
 			throw new Error(errorMsg);
 		}
@@ -191,14 +191,19 @@ export class ReleaseNotesGenerator {
 	 * @param issuesOrPrs The issues or prs to build the category sections from.
 	 * @returns The category sections.
 	 */
-	private buildCategorySections(categoryMappings: Record<string, string | undefined>, issuesOrPrs: IssueModel[] | PullRequestModel[]): Record<string, string[]> {
+	private buildCategorySections(
+		categoryMappings: Record<string, string | undefined>,
+		issuesOrPrs: IssueModel[] | PullRequestModel[],
+	): Record<string, string[]> {
 		const categorySection: Record<string, string[]> = {};
 
 		for (const catName in categoryMappings) {
 			const catLabel = categoryMappings[catName];
 
-			const catIssues = issuesOrPrs.filter(issue => issue.labels.some(label => catLabel === undefined || label.name === catLabel));
-			if (catIssues.length > 0) {				
+			const catIssues = issuesOrPrs.filter((issue) =>
+				issue.labels.some((label) => catLabel === undefined || label.name === catLabel)
+			);
+			if (catIssues.length > 0) {
 				if (categorySection[catName] === undefined) {
 					categorySection[catName] = [`${this.createCategoryHeader(catName)}\n`];
 				}
@@ -238,7 +243,7 @@ export class ReleaseNotesGenerator {
 	private async getIssues(settings: GeneratorSettings): Promise<IssueModel[]> {
 		const milestoneName = this.buildMilestoneName(settings);
 
-	const issues = await this.milestoneClient?.getIssues(milestoneName) ?? [];
+		const issues = await this.milestoneClient?.getIssues(milestoneName) ?? [];
 
 		const ignoreLabels = settings.ignoreLabels ?? [];
 
@@ -246,7 +251,7 @@ export class ReleaseNotesGenerator {
 			return issues;
 		}
 
-		return issues.filter(issue => issue.labels.every(label => !ignoreLabels.includes(label.name)))
+		return issues.filter((issue) => issue.labels.every((label) => !ignoreLabels.includes(label.name)))
 			.map((issue) => this.sanitizeIssueTitle(settings, issue));
 	}
 
@@ -266,7 +271,7 @@ export class ReleaseNotesGenerator {
 			return prs;
 		}
 
-		return prs.filter(pr => pr.labels.every(label => !ignoreLabels.includes(label.name)))
+		return prs.filter((pr) => pr.labels.every((label) => !ignoreLabels.includes(label.name)))
 			.map((pr) => this.sanitizePrTitle(settings, pr));
 	}
 
@@ -276,9 +281,7 @@ export class ReleaseNotesGenerator {
 	 * @returns The category section.
 	 */
 	private createCategoryHeader(categoryName: string | undefined): string {
-		return categoryName === undefined
-			? ""
-			: `<h2 align="center" style="font-weight: bold;">${categoryName}</h2>`;
+		return categoryName === undefined ? "" : `<h2 align="center" style="font-weight: bold;">${categoryName}</h2>`;
 	}
 
 	/**
@@ -289,7 +292,7 @@ export class ReleaseNotesGenerator {
 	 */
 	private sanitizeIssueTitle(settings: GeneratorSettings, issue: IssueModel): IssueModel {
 		issue.title = this.sanitizeTitle(settings, issue.title ?? "");
-		
+
 		return issue;
 	}
 
@@ -327,7 +330,7 @@ export class ReleaseNotesGenerator {
 		}
 
 		const sections = title.split(" ") ?? [];
-		
+
 		for (const wordToReplace in settings.firstWordReplacements) {
 			const replacementWord = settings.firstWordReplacements[wordToReplace];
 
@@ -360,7 +363,8 @@ export class ReleaseNotesGenerator {
 		}
 
 		// If versions are to be bolded and/or italicized
-		const versionRegex = /v(0|[1-9]\d*)(\.(0|[1-9]\d*))?(\.(0|[1-9]\d*))?(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/gm;
+		const versionRegex =
+			/v(0|[1-9]\d*)(\.(0|[1-9]\d*))?(\.(0|[1-9]\d*))?(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/gm;
 
 		const italicSyntax = settings.italicVersions ? "_" : "";
 		const boldSyntax = settings.boldedVersions ? "**" : "";
@@ -384,7 +388,7 @@ export class ReleaseNotesGenerator {
 			.replace("${VERSION}", settings.version ?? "")
 			.replace("${ENVIRONMENT}", settings.environment ?? "")
 			.replace("${REPONAME}", settings.repoName);
-		
+
 		const extraEmptyLine = settings.extraInfo === undefined ? "" : "\n";
 		return `<h1 align="center" style="color: mediumseagreen;font-weight: bold;">\n${headerText}\n</h1>${extraEmptyLine}`;
 	}
@@ -395,7 +399,7 @@ export class ReleaseNotesGenerator {
 	 * @returns The extra info section.
 	 * @remarks The extra info section will be empty if the given {@link extraInfo} is undefined.
 	 */
-	private createExtraInfo(extraInfo: { title: string, text: string } | undefined): string {
+	private createExtraInfo(extraInfo: { title: string; text: string } | undefined): string {
 		if (extraInfo === undefined) {
 			return "";
 		}
