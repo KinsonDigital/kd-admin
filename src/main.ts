@@ -3,10 +3,9 @@ import { PrCreator } from "./pr-creator.ts";
 import { ReleasePrepper } from "./release-prepper.ts";
 
 await new Command()
-	.name("hello")
-	.description("A simple reverse proxy example cli.")
-	.version("v1.0.0")
-	.option("--create-pr", "Create a pull request.")
+	.name("kd-admin")
+	.description("Tool to create prs and prepare for releases.")
+	.version("v1.0.0-preview.1")
 	.command("create-pr")
 	.action(async () => {
 		const prCreator = new PrCreator();
