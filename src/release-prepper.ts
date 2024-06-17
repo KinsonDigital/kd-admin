@@ -84,6 +84,16 @@ export class ReleasePrepper {
 		const selectedAssignee = Guards.isNothing(chosenReleaseType.assignee) ? await this.getAssignee() : chosenReleaseType.reviewer;
 		
 		const [labelsExist, invalidLabels] = await this.getValidateLabels(chosenReleaseType.releaseLabels);
+
+		if (!labelsExist) {
+			const errorMsg = `The following labels do not exist in the repository:\n` +
+			invalidLabels.map((label) => ` - ${label}`).join("\n") +
+			"\nThe pr labels will be left empty.⚠️";
+		
+			console.log(crayon.lightRed(errorMsg));
+
+			Deno.exit(1);
+		}
 		
 		const orgProject = Guards.isNothing(settings.orgProjectName) ? await this.getProject() : settings.orgProjectName;
 		const orgProjectExists = await this.projectExists(orgProject);
@@ -126,16 +136,7 @@ export class ReleasePrepper {
 			await this.setAssignee(prNumber, selectedAssignee);
 		}
 		
-		// Update the pr by setting the default reviewer, org project, labels and milestone
-		if (labelsExist) {
-			await this.setLabels(prNumber, chosenReleaseType.releaseLabels)
-		} else {
-			const errorMsg = `⚠️The following labels do not exist in the repository:\n` +
-			invalidLabels.map((label) => ` - ${label}`).join("\n") +
-			"\nThe pr labels will be left empty.⚠️";
-		
-			console.log(crayon.lightYellow(errorMsg));
-		}
+		await this.setLabels(prNumber, chosenReleaseType.releaseLabels)
 		
 		// Assign the pr to the org project
 		if (orgProjectExists) {
