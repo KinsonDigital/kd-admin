@@ -1,5 +1,6 @@
 import { Command } from "../deps.ts";
 import { PrCreator } from "./pr-creator.ts";
+import { ReleasePrepper } from "./release-prepper.ts";
 
 await new Command()
 	.name("hello")
@@ -12,7 +13,8 @@ await new Command()
 		await prCreator.createPr();
 	})
 	.command("prepare-for-release")
-	.action(() => {
-		
+	.action(async () => {
+		const prepareRelease = new ReleasePrepper();
+		await prepareRelease.prepareForRelease();
 	})
 	.parse();
