@@ -14,7 +14,7 @@ export class PrCreator {
 	 */
 	constructor() {
 	}
-	
+
 	public async createPr(): Promise<void> {
 		const settings = this.getSettings();
 
@@ -70,7 +70,8 @@ export class PrCreator {
 		const branchRegex = /^feature\/([1-9][0-9]*)-(?!-)[a-z-]+$/gm;
 
 		if (!branchRegex.test(chosenHeadBranch)) {
-			const errorMsg = `The head branch name '${chosenHeadBranch}' is invalid. It should match the pattern: 'feature/<issue-number>-<branch-name>'`;
+			const errorMsg =
+				`The head branch name '${chosenHeadBranch}' is invalid. It should match the pattern: 'feature/<issue-number>-<branch-name>'`;
 			console.error(crayon.red(errorMsg));
 			Deno.exit(1);
 		}
@@ -127,7 +128,7 @@ export class PrCreator {
 	 * Loads the settings for the script.
 	 * @returns The settings.
 	 */
-	private getSettings (): CreatePrSettings {
+	private getSettings(): CreatePrSettings {
 		const settingsFileName = "create-pr-settings.json";
 		const settingsFilePath = `./${settingsFileName}`;
 
@@ -190,21 +191,21 @@ export class PrCreator {
 		if (settingsObj === null || settingsObj === undefined || typeof settingsObj !== "object") {
 			return false;
 		}
-	
-		const allPropsExist = 'ownerName' in settingsObj &&
-			'repoName' in settingsObj &&
-			'githubTokenEnvVarName' in settingsObj &&
-			'baseBranches' in settingsObj;
-	
+
+		const allPropsExist = "ownerName" in settingsObj &&
+			"repoName" in settingsObj &&
+			"githubTokenEnvVarName" in settingsObj &&
+			"baseBranches" in settingsObj;
+
 		if (allPropsExist) {
 			return Guards.isNotNothing(settingsObj.ownerName) &&
 				Guards.isNotNothing(settingsObj.repoName) &&
 				Guards.isNotNothing(settingsObj.githubTokenEnvVarName) &&
 				Guards.isNotNothing(settingsObj.baseBranches) &&
 				Array.isArray(settingsObj.baseBranches) &&
-				settingsObj.baseBranches.every((b) => Guards.isString(b))
+				settingsObj.baseBranches.every((b) => Guards.isString(b));
 		}
-	
+
 		return false;
 	}
 }
