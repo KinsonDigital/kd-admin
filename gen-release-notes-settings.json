@@ -14,11 +14,11 @@
 		"New Features ✨": "new-feature",
 		"Enhancements ✨": "enhancement",
 		"Bug Fixes 🐛": "bug",
-		"Breaking Changes 🧨": "🧨breaking-changes",
-		"Dependency Updates 📦": "📦dependency-update"
+		"Breaking Changes 🧨": "🧨breaking changes",
+		"Dependency Updates 📦": "📦dependency update"
 	},
 	"prCategoryLabelMappings": {
-		"Dependency Updates 📦": "📦dependency-update"
+		"Dependency Updates 📦": "📦dependency update"
 	},
 	"ignoreLabels": ["🚀Preview Release", "🚀Production Release"],
 	"wordReplacements": {
