@@ -118,7 +118,7 @@ export class PrCreator {
 		const prClient = new PullRequestClient(ownerName, repoName, githubToken);
 		const newPr = await prClient.createPullRequest("new pr", chosenHeadBranch, chosenBaseBranch, "", true, true);
 
-		const successMsg = `Pull request created successfully!\nPR: ${newPr.url}`;
+		const successMsg = `Pull request created successfully!\nPR: ${newPr.html_url}`;
 
 		console.log(crayon.lightGreen(successMsg));
 	}
