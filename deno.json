@@ -26,5 +26,8 @@
         "indentWidth": 4,
         "semiColons": true,
         "singleQuote": false
+    },
+    "imports": {
+        "core/": "./src/core/"
     }
 }

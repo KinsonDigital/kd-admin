@@ -1,7 +1,7 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		{
+		{ // CLEAR SCREEN
 			"label": "clear-screen",
 			"detail": "Clears the terminal screen.",
 			"windows": {
@@ -16,7 +16,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // CLEAN DIST FOLDER
 			"label": "clean-dist",
 			"detail": "Cleans the dist directory.",
 			"options": {
@@ -37,7 +37,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // BUILD
 			"label": "build",
 			"detail": "Builds the project by running deno check.",
 			"dependsOn": [
@@ -60,7 +60,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // LINT
 			"label": "lint",
 			"detail": "Performs linting on the project source code.",
 			"dependsOn": [
@@ -79,7 +79,26 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // FORMAT
+			"label": "format",
+			"detail": "Performs formatting on the project source code.",
+			"dependsOn": [
+				"clear-screen"
+			],
+			"command": "deno",
+			"type": "shell",
+			"args": [
+				"fmt",
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"presentation": {
+				"reveal": "always"
+			},
+			"group": "build"
+		},
+		{ // CACHE DEPENDENCIES
 			"label": "cache-dependencies",
 			"detail": "Cache dependencies for the project.",
 			"dependsOn": [
@@ -99,7 +118,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // COMPILE ALL PLATFORMS
 			"label": "compile-all",
 			"detail": "Compiles the project into an executable.",
 			"dependsOn": [
@@ -126,7 +145,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // COMPILE WIN X64
 			"label": "compile-win-x64",
 			"detail": "Compiles the project into an executable.",
 			"dependsOn": [
@@ -152,7 +171,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // COMPILE LINUX X64
 			"label": "compile-linux-x64",
 			"detail": "Compiles the project into an executable.",
 			"dependsOn": [
@@ -178,7 +197,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // COMPILE APPLE DARWIN X64
 			"label": "compile-apple-darwin-x64",
 			"detail": "Compiles the project into an executable.",
 			"dependsOn": [
@@ -204,7 +223,7 @@
 			},
 			"group": "build"
 		},
-		{
+		{ // COMPILE APPLE DARWIN ARM
 			"label": "compile-apple-darwin-arm",
 			"detail": "Compiles the project into an executable.",
 			"dependsOn": [

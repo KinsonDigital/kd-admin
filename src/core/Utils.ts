@@ -123,6 +123,15 @@ export class Utils {
 	}
 
 	/**
+	 * Checks if the given {@link version} is not a valid preview or production version.
+	 * @param version The version to check.
+	 * @returns True if the version is not a valid preview or production version, otherwise false.
+	 */
+	public static isNotValidPreviewOrProdVersion(version: string): boolean {
+		return this.isNotValidPreviewVersion(version) && this.isNotValidProdVersion(version);
+	}
+
+	/**
 	 * Prints an empty line to the console.
 	 */
 	public static printEmptyLine(): void {
@@ -130,12 +139,22 @@ export class Utils {
 	}
 
 	/**
-	 * Prints the given {@link message} as a error.
+	 * Prints the given {@link message} as a GitHub error.
 	 * @param message The message to print.
 	 */
 	public static printError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(message));
+		console.log(chalk.red(`::error::${message}`));
+		Utils.printEmptyLine();
+	}
+
+	/**
+	 * Prints the given {@link message} as a GitHub notice.
+	 * @param message The message to print.
+	 */
+	public static printNotice(message: string): void {
+		Utils.printEmptyLine();
+		console.log(chalk.red(`::notice::${message}`));
 		Utils.printEmptyLine();
 	}
 

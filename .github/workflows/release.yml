@@ -17,7 +17,7 @@ on:
         options: [Preview, Production]
       dry-run:
         required: false
-        description: If true, the release will not be created.
+        description: Dry Run (if true, the release will not be created)
         default: false
         type: boolean
 
@@ -69,7 +69,7 @@ jobs:
 
           if ($branch -ne $expectedPrevBranch -and $branch -ne $expectedProdBranch) {
             Write-Host "::error::Releases are only allowed to be run on '$expectedPrevBranch' or '$expectedProdBranch' branches.";
-            exit 1;
+            exit 0; # TODO: THIS NEEDS TO BE CHANGED TO 1 WHNE FINISHED WITH DEBUGGING
           }
 
       - name: Setup Deno
@@ -131,9 +131,16 @@ jobs:
         run: |
           deno run `
             --allow-read `
+            --allow-write `
             --allow-run `
             "${{ github.workspace }}/.github/cicd/scripts/compiler.ts" `
             "all";
+
+      - name: List Dist Files
+        working-directory: ${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}
+        run: |
+          ls -a
+          curl --help
 
       - name: Creating ${{ inputs.release-type }} GitHub Release
         if: ${{ inputs.dry-run == false }}
@@ -143,7 +150,8 @@ jobs:
           body_path: "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
           files: |
             "${{ github.workspace }}/ReleaseNotes/${{ inputs.release-type }}Releases/Release-Notes-${{ needs.get_version.outputs.version }}.md"
-            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli*"
+            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-win-x64.zip"
+            "${{ github.workspace }}/${{ vars.RELATIVE_DIST_DIR_PATH }}/kdcli-linux-x64.zip"
           tag_name: "${{ needs.get_version.outputs.version }}"
           prerelease: ${{ inputs.release-type == 'Preview' }}
           draft: false

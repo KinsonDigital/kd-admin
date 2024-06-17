@@ -26,6 +26,32 @@
 				"${env:CICD_TOKEN}",
 			],
 			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
+		},
+		{ // INSTALL APP
+			"request": "launch",
+			"name": "Install App",
+			"type": "node",
+			"program": "${workspaceFolder}/.github/cicd/scripts/installer.ts",
+			"cwd": "${workspaceFolder}",
+			"windows": {
+				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+			},
+			"linux": {
+				"runtimeExecutable": "${userHome}/.deno/bin/deno"
+			},
+			"runtimeArgs": [
+				"run",
+				"--inspect-wait",
+				"--allow-read",
+				"--allow-write",
+				"--allow-run",
+				"--allow-net",
+				"--allow-env",
+				"--allow-sys",
+			],
+			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
 		},
 		{ // DEBUG APP
 			"name": "Debug App",
@@ -85,6 +111,7 @@
 				"run",
 				"--inspect-wait",
 				"--allow-read",
+				"--allow-write",
 				"--allow-run",
 			],
 			"args": [
