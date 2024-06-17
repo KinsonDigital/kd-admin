@@ -1,5 +1,5 @@
 import { Guard } from "./Guard.ts";
-import { chalk } from "../../deps.ts";
+import { crayon } from "../../deps.ts";
 
 /**
  * Provides utility functions.
@@ -144,7 +144,7 @@ export class Utils {
 	 */
 	public static printError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(`::error::${message}`));
+		console.log(crayon.red(`::error::${message}`));
 		Utils.printEmptyLine();
 	}
 
@@ -154,7 +154,7 @@ export class Utils {
 	 */
 	public static printNotice(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(`::notice::${message}`));
+		console.log(crayon.red(`::notice::${message}`));
 		Utils.printEmptyLine();
 	}
 
