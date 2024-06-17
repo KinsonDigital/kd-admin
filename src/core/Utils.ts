@@ -1,4 +1,4 @@
-import { Guard } from "./Guard.ts";
+import { Guards } from "./guards.ts";
 import { crayon } from "../../deps.ts";
 
 /**
@@ -167,10 +167,9 @@ export class Utils {
 	 * @returns The URL to the issue.
 	 */
 	public static buildPullRequestUrl(ownerName: string, repoName: string, prNumber: number): string {
-		const funcName = "buildPullRequestUrl";
-		Guard.isNothing(ownerName, funcName, "ownerName");
-		Guard.isNothing(repoName, funcName, "repoName");
-		Guard.isLessThanOne(prNumber, funcName, "prNumber");
+		Guards.isNothing(ownerName);
+		Guards.isNothing(repoName);
+		Guards.isLessThanOne(prNumber)
 
 		return `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 	}
@@ -183,9 +182,8 @@ export class Utils {
 	 * @returns The URL to the repository labels page.
 	 */
 	public static buildLabelsUrl(ownerName: string, repoName: string): string {
-		const funcName = "buildLabelsUrl";
-		Guard.isNothing(ownerName, funcName, "ownerName");
-		Guard.isNothing(repoName, funcName, "repoName");
+		Guards.isNothing(ownerName);
+		Guards.isNothing(repoName);
 
 		return `https://github.com/${ownerName}/${repoName}/labels`;
 	}
