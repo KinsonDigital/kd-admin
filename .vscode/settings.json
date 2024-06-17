@@ -6,6 +6,7 @@
 		"Kinson",
 		"LOCALAPPDATA",
 		"msvc",
+		"Prepper",
 		"setx"
 	],
 	"files.exclude": {
