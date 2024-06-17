@@ -11,9 +11,9 @@
 	},
 	"emojisToRemoveFromTitle": ["🚧", "🐛", "✨", "🚀", "🧪", "🔬"],
 	"issueCategoryLabelMappings": {
-		"New Features ✨": "new-feature",
-		"Enhancements ✨": "enhancement",
-		"Bug Fixes 🐛": "bug",
+		"New Features ✨": "✨new feature",
+		"Enhancements ✨": "💎enhancement",
+		"Bug Fixes 🐛": "🐛bug",
 		"Breaking Changes 🧨": "🧨breaking changes",
 		"Dependency Updates 📦": "📦dependency update"
 	},
