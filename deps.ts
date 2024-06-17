@@ -8,7 +8,7 @@ import { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg } fro
 // Third Party Deno Modules
 import { RepoClient, TagClient, UsersClient } from "https://deno.land/x/kd_clients@v1.0.0-preview.13/GitHubClients/mod.ts";
 import { Confirm, Input, Secret, Select } from "https://deno.land/x/cliffy@v1.0.0-rc.4/prompt/mod.ts";
-
+import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.4/command/mod.ts";
 import { crayon } from "https://deno.land/x/crayon@3.3.3/mod.ts";
 
 // ----EXPORTS----
@@ -21,5 +21,5 @@ export { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg };
 // Third Party Deno Module Exports
 export { RepoClient, TagClient, UsersClient };
 export { Confirm, Input, Secret, Select };
-
+export { Command };
 export { crayon };
