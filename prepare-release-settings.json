@@ -1,0 +1,30 @@
+{
+    "ownerName": "KinsonDigital",
+    "repoName": "kd-admin",
+    "orgProjectName": "KD-Team",
+    "releaseTypes": [{
+        "name": "preview",
+        "reviewer": "KinsonDigitalAdmin",
+        "assignee": "CalvinWilkinson",
+        "headBranch": "prev-release",
+        "baseBranch": "preview",
+        "genReleaseSettingsFilePath": "./gen-release-notes-settings.json",
+        "releasePrTemplateFilePath": "./templates/prev-prepare-release-template.md",
+        "releaseNotesDirPath": "./release-notes/preview-releases",
+        "releaseLabels": ["🚀Preview Release"],
+        "prTitle": "🚀Preview Release - ${VERSION}"
+    },
+    {
+        "name": "production",
+        "reviewer": "KinsonDigitalAdmin",
+        "assignee": "CalvinWilkinson",
+        "headBranch": "prod-release",
+        "baseBranch": "main",
+        "genReleaseSettingsFilePath": "./gen-release-notes-settings.json",
+        "releasePrTemplateFilePath": "./templates/prod-prepare-release-template.md",
+        "releaseNotesDirPath": "./release-notes/production-releases",
+        "releaseLabels": ["🚀Production Release"],
+        "prTitle": "🚀Production Release - ${VERSION}"
+    }],
+    "githubTokenEnvVarName": "CICD_TOKEN"
+}

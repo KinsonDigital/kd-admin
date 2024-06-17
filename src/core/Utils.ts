@@ -1,5 +1,5 @@
-import { Guard } from "./Guard.ts";
-import { chalk } from "../../deps.ts";
+import { ParamGuards } from "./param-guards.ts";
+import { crayon } from "../../deps.ts";
 
 /**
  * Provides utility functions.
@@ -144,7 +144,7 @@ export class Utils {
 	 */
 	public static printError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(`::error::${message}`));
+		console.log(crayon.red(`::error::${message}`));
 		Utils.printEmptyLine();
 	}
 
@@ -154,7 +154,7 @@ export class Utils {
 	 */
 	public static printNotice(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(`::notice::${message}`));
+		console.log(crayon.red(`::notice::${message}`));
 		Utils.printEmptyLine();
 	}
 
@@ -167,10 +167,9 @@ export class Utils {
 	 * @returns The URL to the issue.
 	 */
 	public static buildPullRequestUrl(ownerName: string, repoName: string, prNumber: number): string {
-		const funcName = "buildPullRequestUrl";
-		Guard.isNothing(ownerName, funcName, "ownerName");
-		Guard.isNothing(repoName, funcName, "repoName");
-		Guard.isLessThanOne(prNumber, funcName, "prNumber");
+		ParamGuards.isNothing(ownerName);
+		ParamGuards.isNothing(repoName);
+		ParamGuards.isLessThanOne(prNumber)
 
 		return `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 	}
@@ -183,9 +182,8 @@ export class Utils {
 	 * @returns The URL to the repository labels page.
 	 */
 	public static buildLabelsUrl(ownerName: string, repoName: string): string {
-		const funcName = "buildLabelsUrl";
-		Guard.isNothing(ownerName, funcName, "ownerName");
-		Guard.isNothing(repoName, funcName, "repoName");
+		ParamGuards.isNothing(ownerName);
+		ParamGuards.isNothing(repoName);
 
 		return `https://github.com/${ownerName}/${repoName}/labels`;
 	}
