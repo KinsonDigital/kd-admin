@@ -1,5 +1,5 @@
-name: ✅Build Status Check
-run-name: ✅Build Status Check (${{ github.base_ref }} branch)
+name: ✅Format Status Check
+run-name: ✅Format Status Check (${{ github.base_ref }} branch)
 
 
 defaults:
@@ -13,8 +13,8 @@ on:
 
 
 jobs:
-  build_status_check:
-    name: Build Status Check
+  lint_status_check:
+    name: Lint Status Check
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
@@ -28,6 +28,5 @@ jobs:
       with:
         deno-version: ${{ vars.DENO_VERSION }}
 
-    - name: Run Build
-      run: |
-        deno run --allow-read --allow-run "./.github/cicd/scripts/deno-build.ts";
+    - name: Run Lint
+      run: deno fmt --check

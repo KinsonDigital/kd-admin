@@ -1,7 +1,7 @@
 {
     "version": "v1.0.0-preview.1",
     "tasks": {
-        "build": "deno run -A ./.github/cicd/scripts/deno-check.ts"
+        "build": "./.github/cicd/scripts/deno-build.ts"
     },
     "lint": {
         "include": [
@@ -26,5 +26,8 @@
         "indentWidth": 4,
         "semiColons": true,
         "singleQuote": false
+    },
+    "imports": {
+        "core/": "./src/core/"
     }
 }

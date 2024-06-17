@@ -26,9 +26,10 @@
 				"${env:CICD_TOKEN}",
 			],
 			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
 		},
-		{ // DEBUG APP
-			"name": "Debug App",
+		{ // CREATE PR (DEBUG)
+			"name": "Create PR (Debug)",
 			"request": "launch",
 			"type": "node",
 			"program": "${workspaceFolder}/src/main.ts",
@@ -44,7 +45,34 @@
 				"--inspect-wait",
 				"--allow-all"
 			],
-			"attachSimplePort": 9229
+			"args": [
+				"create-pr",
+			],
+			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
+		},
+		{ // PREPARE RELEASE (DEBUG)
+			"name": "Prepare Release (Debug)",
+			"request": "launch",
+			"type": "node",
+			"program": "${workspaceFolder}/src/main.ts",
+			"cwd": "${workspaceFolder}",
+			"windows": {
+				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+			},
+			"linux": {
+				"runtimeExecutable": "${userHome}/.deno/bin/deno"
+			},
+			"runtimeArgs": [
+				"run",
+				"--inspect-wait",
+				"--allow-all"
+			],
+			"args": [
+				"prepare-for-release",
+			],
+			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
 		},
 		{ // DEBUG UNIT TEST FILE
 			"name": "Debug Unit Test File",
@@ -68,30 +96,6 @@
 			"linux": {
 				"runtimeExecutable": "${userHome}/.deno/bin/deno"
 			},
-		},
-		{ // COMPILER CICD SCRIPT
-			"name": "Compiler CICD Script",
-			"request": "launch",
-			"type": "node",
-			"program": "${workspaceFolder}/.github/cicd/scripts/compiler.ts",
-			"cwd": "${workspaceFolder}",
-			"windows": {
-				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
-			},
-			"linux": {
-				"runtimeExecutable": "${userHome}/.deno/bin/deno"
-			},
-			"runtimeArgs": [
-				"run",
-				"--inspect-wait",
-				"--allow-read",
-				"--allow-run",
-			],
-			"args": [
-				"all",
-			],
-			"attachSimplePort": 9229,
-			"preLaunchTask": "clean-dist"
 		},
 		{ // GET VERSION CICD SCRIPT
 			"request": "launch",
