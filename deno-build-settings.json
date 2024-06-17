@@ -1,0 +1,7 @@
+{
+    "ignoreExpressions": [
+		".*\/vendor\/",
+		".*\\(\\/|\\)node_modules\\(\\/|\\).*",
+        ".*playground.*"
+    ]
+}
