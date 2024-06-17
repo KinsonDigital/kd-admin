@@ -1,5 +1,5 @@
-import { Guard } from "./Guard.ts";
-import { chalk } from "../../deps.ts";
+import { ParamGuards } from "./param-guards.ts";
+import { crayon } from "../../deps.ts";
 
 /**
  * Provides utility functions.
@@ -123,6 +123,15 @@ export class Utils {
 	}
 
 	/**
+	 * Checks if the given {@link version} is not a valid preview or production version.
+	 * @param version The version to check.
+	 * @returns True if the version is not a valid preview or production version, otherwise false.
+	 */
+	public static isNotValidPreviewOrProdVersion(version: string): boolean {
+		return this.isNotValidPreviewVersion(version) && this.isNotValidProdVersion(version);
+	}
+
+	/**
 	 * Prints an empty line to the console.
 	 */
 	public static printEmptyLine(): void {
@@ -130,12 +139,22 @@ export class Utils {
 	}
 
 	/**
-	 * Prints the given {@link message} as a error.
+	 * Prints the given {@link message} as a GitHub error.
 	 * @param message The message to print.
 	 */
 	public static printError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(chalk.red(message));
+		console.log(crayon.red(`::error::${message}`));
+		Utils.printEmptyLine();
+	}
+
+	/**
+	 * Prints the given {@link message} as a GitHub notice.
+	 * @param message The message to print.
+	 */
+	public static printNotice(message: string): void {
+		Utils.printEmptyLine();
+		console.log(crayon.red(`::notice::${message}`));
 		Utils.printEmptyLine();
 	}
 
@@ -148,10 +167,9 @@ export class Utils {
 	 * @returns The URL to the issue.
 	 */
 	public static buildPullRequestUrl(ownerName: string, repoName: string, prNumber: number): string {
-		const funcName = "buildPullRequestUrl";
-		Guard.isNothing(ownerName, funcName, "ownerName");
-		Guard.isNothing(repoName, funcName, "repoName");
-		Guard.isLessThanOne(prNumber, funcName, "prNumber");
+		ParamGuards.isNothing(ownerName);
+		ParamGuards.isNothing(repoName);
+		ParamGuards.isLessThanOne(prNumber)
 
 		return `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 	}
@@ -164,9 +182,8 @@ export class Utils {
 	 * @returns The URL to the repository labels page.
 	 */
 	public static buildLabelsUrl(ownerName: string, repoName: string): string {
-		const funcName = "buildLabelsUrl";
-		Guard.isNothing(ownerName, funcName, "ownerName");
-		Guard.isNothing(repoName, funcName, "repoName");
+		ParamGuards.isNothing(ownerName);
+		ParamGuards.isNothing(repoName);
 
 		return `https://github.com/${ownerName}/${repoName}/labels`;
 	}
