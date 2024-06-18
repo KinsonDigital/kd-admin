@@ -29,7 +29,7 @@ export class JsonVersionUpdater {
 
 		versionConfig.version = newVersion;
 
-		Deno.writeTextFileSync(versionFilePath, JSON.stringify(versionConfig, null, 4));
+		Deno.writeTextFileSync(versionFilePath, `${JSON.stringify(versionConfig, null, 4)}\n`);
 	}
 
 	/**
