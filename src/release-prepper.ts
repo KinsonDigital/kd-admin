@@ -1,5 +1,6 @@
 import {
 	existsSync,
+	extname,
 	LabelClient,
 	MilestoneClient,
 	OrgClient,
@@ -17,9 +18,12 @@ import { PrepareReleaseSettings } from "./prepare-release-settings.ts";
 import { ReleaseType } from "./release-type.ts";
 import { ReleaseNotesGenerator } from "./release-notes-generator.ts";
 import { GeneratorSettings } from "./generator-settings.ts";
+import { JsonVersionUpdater } from "./json-version-updater.ts";
+import { CSharpVersionUpdater } from "./csharp-version-updater.ts";
+import { resolve } from "../deps.ts";
 
 /**
- * Prepares for a release by creating various branches, release notes, and a pr.
+ * Prepares for a release by creating various branches, release notes, updating the version, and creating a pr.
  */
 export class ReleasePrepper {
 	private readonly settings: PrepareReleaseSettings;
@@ -52,6 +56,9 @@ export class ReleasePrepper {
 		this.orgClient = new OrgClient(this.settings.ownerName, this.token);
 	}
 
+	/**
+	 * Prepares for a release.
+	 */
 	public async prepareForRelease(): Promise<void> {
 		const settings: PrepareReleaseSettings = this.getSettings();
 
@@ -114,23 +121,55 @@ export class ReleasePrepper {
 			Deno.exit(1);
 		}
 
+		if (Guards.isNothing(settings.versionFilePath)) {
+			const warningMsg = "The 'versionFilePath' setting is not set.  The version will not be updated.";
+			console.log(crayon.lightYellow(warningMsg));
+		} else {
+			// Validate version file exists
+			const versionFileExists = existsSync(settings.versionFilePath, { isFile: true });
+
+			if (!versionFileExists) {
+				const errorMsg = `The version file '${settings.versionFilePath}' does not exist.`;
+				console.log(crayon.lightRed(errorMsg));
+				Deno.exit(1);
+			}
+		}
+
 		await this.createReleaseBranch(chosenReleaseType);
+
+		if (!Guards.isNothing(settings.versionFilePath)) {
+			try {
+				this.updateVersion(settings.versionFilePath, chosenVersion);
+			} catch (error) {
+				console.log(crayon.lightRed(error.message));
+			}
+
+			// Stage version update
+			console.log(crayon.lightBlack("   ⏳Staging version update."));
+			await this.stageFile(resolve(Deno.cwd(), settings.versionFilePath));
+
+			// Commit version update
+			console.log(crayon.lightBlack("   ⏳Creating version update commit."));
+			await this.createCommit(`release: update version to ${chosenVersion}`);
+		}
 
 		// Generate the release notes
 		const newNotesFilePath = await this.createReleaseNotes(chosenReleaseType, chosenVersion, settings.githubTokenEnvVarName);
 
-		// If release notes were generated, stage, commit, and push to remote
+		// If release notes were generated, stage and commit them.
 		if (newNotesFilePath !== undefined) {
-			await this.stageReleaseNotes(newNotesFilePath);
+			console.log(crayon.lightBlack("   ⏳Staging release notes."));
+			await this.stageFile(newNotesFilePath);
 
-			await this.commitReleaseNotes(newNotesFilePath, chosenVersion);
-
-			await this.pushToRemote(chosenReleaseType.headBranch);
+			console.log(crayon.lightBlack("   ⏳Creating release notes commit."));
+			await this.createCommit(`release: create release notes for version ${chosenVersion}`);
 		}
+
+		await this.pushToRemote(chosenReleaseType.headBranch);
 
 		const prNumber = await this.createPullRequest(chosenReleaseType, chosenVersion);
 
-		// If an reviewer was selected, assign the pr to the selected reviewer
+		// If a reviewer was selected, assign the pr to the selected reviewer
 		if (prReviewer !== undefined) {
 			console.log(crayon.lightBlack(`   ⏳Setting pr reviewer to '${prReviewer}'.`));
 			await this.prClient.requestReviewers(prNumber, prReviewer);
@@ -165,6 +204,34 @@ export class ReleasePrepper {
 
 		const prUrl = `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
 		console.log(crayon.lightGreen(`\nPull Request: ${prUrl}`));
+	}
+
+	/**
+	 * Updates the version in the version file at the given {@link versionFilePath} to the given {@link newVersion}.
+	 * @param versionFilePath The full or relative file path to the version file.
+	 * @param newVersion The new version.
+	 */
+	private updateVersion(versionFilePath: string, newVersion: string) {
+		const extension = extname(versionFilePath).toLowerCase().trim();
+		newVersion = newVersion.trim();
+
+		switch (extension) {
+			case ".json": {
+				const jsonUpdater = new JsonVersionUpdater();
+				jsonUpdater.updateVersion(versionFilePath, newVersion);
+				break;
+			}
+			case ".csproj": {
+				const csharpUpdater = new CSharpVersionUpdater();
+				csharpUpdater.updateVersion(versionFilePath, newVersion);
+				break;
+			}
+			default: {
+				const errorMsg = `The file extension '${extension}' is not supported.`;
+				console.log(crayon.lightRed(errorMsg));
+				Deno.exit(1);
+			}
+		}
 	}
 
 	/**
@@ -438,8 +505,11 @@ export class ReleasePrepper {
 		return settings;
 	}
 
-	private async stageReleaseNotes(newNotesFilePath: string): Promise<void> {
-		console.log(crayon.lightBlack("   ⏳Staging release notes."));
+	/**
+	 * Stages the given {@link newNotesFilePath} file.
+	 * @param newNotesFilePath The file to stage.
+	 */
+	private async stageFile(newNotesFilePath: string): Promise<void> {
 		const stageResult = await runAsync("git", ["add", newNotesFilePath]);
 
 		if (stageResult instanceof Error) {
@@ -449,17 +519,21 @@ export class ReleasePrepper {
 		}
 	}
 
-	private async commitReleaseNotes(newNotesFilePath: string, chosenVersion: string): Promise<void> {
-		console.log(crayon.lightBlack("   ⏳Creating commit."));
+	/**
+	 * Creates a commit with the given {@link commitMsg}.
+	 * @param newNotesFilePath The file to commit.
+	 * @param commitMsg The commit message.
+	 */
+	private async createCommit(commitMsg: string): Promise<void> {
 		const createCommitResult = await runAsync("git", [
 			"commit",
 			"-m",
-			`release: create release notes for version ${chosenVersion}`,
+			commitMsg,
 		]);
 
 		if (createCommitResult instanceof Error) {
 			const errorMsg =
-				`There was an error committing the release notes file '${newNotesFilePath}'\n${createCommitResult.message}.`;
+				`There was an error creating the commit with the message '${commitMsg}'\n${createCommitResult.message}.`;
 			console.log(crayon.lightRed(errorMsg));
 			Deno.exit(1);
 		}

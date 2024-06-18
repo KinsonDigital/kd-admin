@@ -10,6 +10,12 @@
 			"type": "node",
 			"program": "${workspaceFolder}/playground.ts",
 			"cwd": "${workspaceFolder}",
+			"env": {
+				"WORKING_DIR": "${workspaceFolder}",
+				"GITHUB_TOKEN": "${env:CICD_TOKEN}",
+				"OWNER_NAME": "KinsonDigital",
+				"REPO_NAME": "kd-admin"
+			},
 			"windows": {
 				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
 			},
@@ -20,10 +26,6 @@
 				"run",
 				"--inspect-wait",
 				"--allow-all",
-			],
-			"args": [
-				"${workspaceFolder}",
-				"${env:CICD_TOKEN}",
 			],
 			"attachSimplePort": 9229,
 			"console": "integratedTerminal"

@@ -2,6 +2,7 @@
 
 // Official Deno Modules
 import { existsSync, walkSync } from "https://deno.land/std@0.224.0/fs/mod.ts";
+import { extname, resolve } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { assert, assertEquals, assertThrows, assertRejects, equal } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { toText } from "https://deno.land/std@0.218.2/streams/mod.ts";
@@ -20,6 +21,7 @@ import { crayon } from "https://deno.land/x/crayon@3.3.3/mod.ts";
 
 // Official Deno Module Exports
 export { existsSync, walkSync }
+export { extname, resolve };
 export { assert, assertEquals, assertThrows, assertRejects, equal };
 export { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg };
 export { toText };

@@ -1,5 +1,6 @@
 import { assertEquals } from "../deps.ts";
-import { Utils } from "../src/core/Utils.ts";
+import { Utils } from "core/Utils.ts";
+
 
 Deno.test("clamp |> when-num-is-larger-than-max |> returns-max-value", () => {
 	// Arrange
@@ -11,4 +12,27 @@ Deno.test("clamp |> when-num-is-larger-than-max |> returns-max-value", () => {
 
 	// Assert
 	assertEquals(actual, expected);
+});
+
+[
+	[undefined, true],
+	[null, true],
+	["", true],
+	["test", false],
+	[42, false],
+	[[], false],
+	[[1, 2, 3], false],
+	[() => "test", false],
+	[{ name: "John" }, false]
+].forEach((testParams) => {
+	Deno.test("isNothing |> when invoked |> returns correct result", () => {
+		// Arrange
+		const [value, expected] = testParams;
+		
+		// Act
+		const result = Utils.isNothing(value);
+
+		// Assert
+		assertEquals(result, expected);
+	});
 });

@@ -26,7 +26,7 @@ export class Utils {
 		}
 
 		if (Array.isArray(value)) {
-			return value.length === 0;
+			return false;
 		}
 
 		return false;
