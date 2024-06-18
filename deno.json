@@ -1,7 +1,8 @@
 {
     "version": "v1.0.0-preview.1",
     "tasks": {
-        "build": "./.github/cicd/scripts/deno-build.ts"
+        "build": "./.github/cicd/scripts/deno-build.ts",
+        "tests": "deno test ./Tests/*Tests.ts"
     },
     "lint": {
         "include": [
