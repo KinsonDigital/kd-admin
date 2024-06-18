@@ -1,6 +1,6 @@
 import { IssueModel, PullRequestModel } from "../deps.ts";
 import { LabelClient, MilestoneClient, RepoClient } from "../deps.ts";
-import { Guards } from "core/guards.ts";
+import { Guards } from "./core/guards.ts";
 import { GeneratorSettings } from "./generator-settings.ts";
 
 /**

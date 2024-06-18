@@ -1,4 +1,4 @@
-import { ParamGuards } from "core/param-guards.ts";
+import { ParamGuards } from "./core/param-guards.ts";
 import { existsSync } from "../deps.ts";
 
 /**

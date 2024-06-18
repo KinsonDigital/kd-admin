@@ -1,5 +1,5 @@
 import { existsSync } from "../deps.ts";
-import { ParamGuards } from "core/param-guards.ts";
+import { ParamGuards } from "./core/param-guards.ts";
 
 /**
  * Updates the version in a JSON file.
