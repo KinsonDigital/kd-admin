@@ -28,4 +28,10 @@ export interface PrepareReleaseSettings {
 	 * Gets the name of the name of the environment name for the GitHub token.
 	 */
 	githubTokenEnvVarName: string;
+
+	/**
+	 * Gets the full or relative file path to the version file.
+	 * @remarks If undefined, null, or empty, then the version will not be updated.
+	 */
+	versionFilePath?: string;
 }
