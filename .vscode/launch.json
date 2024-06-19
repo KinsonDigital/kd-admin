@@ -44,6 +44,9 @@
 			},
 			"runtimeArgs": [
 				"run",
+				"--allow-env",
+				"--allow-read",
+				"--allow-net",
 				"--inspect-wait",
 			],
 			"args": [
@@ -66,6 +69,11 @@
 			},
 			"runtimeArgs": [
 				"run",
+				"--allow-env",
+				"--allow-read",
+				"--allow-write",
+				"--allow-net",
+				"--allow-run",
 				"--inspect-wait",
 			],
 			"args": [
