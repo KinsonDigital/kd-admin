@@ -7,6 +7,13 @@ import { existsSync } from "../deps.ts";
 
 const scriptArgs = Deno.args.map((arg) => arg.trim());
 
+if (scriptArgs.length === 0) {
+	const message = "Please provide a version argument to install." +
+		"\nUse the value 'latest' to install the latest version.";
+	console.log(`%c${message}`, "color: cyan");
+	Deno.exit(1);
+}
+
 let [version] = scriptArgs;
 version = version.toLowerCase();
 version = version === "latest" || version.startsWith("v") ? version : `v${version}`;
