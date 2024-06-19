@@ -34,7 +34,7 @@ if (existsSync(`./${createPrShellFileName}`)) {
 	});
 
 	if (confirmCreatePRShellScript) {
-		Deno.writeTextFileSync(`./${createPrShellFileName}`, "& \"bin/kd-admin\" create-pr;");
+		Deno.writeTextFileSync(`./${createPrShellFileName}`, "& \"dev-tools/bin/kd-admin\" create-pr;");
 		console.log(`%cCreated '${createPrShellFileName}' file.`, "color: gray");
 	}
 }
@@ -48,7 +48,7 @@ if (existsSync(`./${prepareReleaseShellFileName}`)) {
 	});
 
 	if (confirmCreatePrepareReleaseShellScript) {
-		Deno.writeTextFileSync(`./${prepareReleaseShellFileName}`, "& \"bin/kd-admin\" prepare-for-release;");
+		Deno.writeTextFileSync(`./${prepareReleaseShellFileName}`, "& \"dev-tools/bin/kd-admin\" prepare-for-release;");
 		console.log(`%cCreated '${prepareReleaseShellFileName}' file.`, "color: gray");
 	}
 }
