@@ -2,7 +2,7 @@ import { Command } from "../deps.ts";
 import { PrCreator } from "./pr-creator.ts";
 import { ReleasePrepper } from "./release-prepper.ts";
 
-await new Command()
+const command = new Command()
 	.name("kd-admin")
 	.description("Tool to create prs and prepare for releases.")
 	.version("v1.0.0-preview.1")
@@ -15,5 +15,11 @@ await new Command()
 	.action(async () => {
 		const prepareRelease = new ReleasePrepper();
 		await prepareRelease.prepareForRelease();
-	})
-	.parse();
+	});
+
+if (Deno.args.length === 0) {
+	command.showHelp();
+} else {
+	await command.parse(Deno.args);
+}
+
