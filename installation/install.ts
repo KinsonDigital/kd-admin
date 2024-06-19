@@ -4,6 +4,7 @@ import runAsync from "../src/core/run-async.ts";
 import { CreatePrSettings } from "../src/create-pr-settings.ts";
 import { PrepareReleaseSettings } from "../src/prepare-release-settings.ts";
 import { existsSync } from "../deps.ts";
+import { GeneratorSettings } from "../src/generator-settings.ts";
 
 const scriptArgs = Deno.args.map((arg) => arg.trim());
 
@@ -22,6 +23,7 @@ const createPrShellFileName = "create-pr.ps1";
 const prepareReleaseShellFileName = "prepare-for-release.ps1";
 const createPrSettingsFileName = "create-pr-settings.json";
 const prepareReleaseSettingsFileName = "prepare-release-settings.json";
+const generateReleaseSettingsFileName = "gen-release-notes-settings.json";
 
 if (existsSync(`./${createPrShellFileName}`)) {
 	console.log(`%c'${createPrShellFileName}' file already exists. Skipping creation.`, "color: khaki");
@@ -31,7 +33,7 @@ if (existsSync(`./${createPrShellFileName}`)) {
 		default: true,
 	});
 
-	if (!confirmCreatePRShellScript) {
+	if (confirmCreatePRShellScript) {
 		Deno.writeTextFileSync(`./${createPrShellFileName}`, "& \"bin/kd-admin\" create-pr;");
 		console.log(`%cCreated '${createPrShellFileName}' file.`, "color: gray");
 	}
@@ -106,6 +108,40 @@ if (existsSync(`./${prepareReleaseSettingsFileName}`)) {
 	}
 }
 
+if (existsSync(`./${generateReleaseSettingsFileName}`)) {
+	console.log(`%c'${generateReleaseSettingsFileName}' file already exists. Skipping creation.`, "color: khaki");
+} else {
+	const confirmGenReleaseSettingsFile = await Confirm.prompt({
+		message: "Do you want to add a the generate release settings file?",
+		default: true,
+	});
+	
+	if (confirmGenReleaseSettingsFile) {
+		const genReleaseSettings: GeneratorSettings = {
+			ownerName: "",
+			repoName: "",
+			githubTokenEnvVarName: "",
+			milestoneName: "",
+			headerText: "",
+			version: "",
+			environment: "",
+			extraInfo: { title: "", text: "" },
+			emojisToRemoveFromTitle: [],
+			issueCategoryLabelMappings: {},
+			prCategoryLabelMappings: {},
+			ignoreLabels: [],
+			wordReplacements: {},
+			firstWordReplacements: {},
+			styleWordsList: {},
+			boldedVersions: true,
+			italicVersions: true,
+			otherCategoryName: "",
+		};
+
+		Deno.writeTextFileSync(`./${generateReleaseSettingsFileName}`, `${JSON.stringify(genReleaseSettings, null, 2)}\n`);
+	}
+}
+
 const ownerName = "KinsonDigital";
 const repoName = "kd-admin";
 
@@ -141,6 +177,6 @@ const args = [
 
 console.log("   %c⏳ Installing kd-admin ...", "color: gray");
 await runAsync("deno", args);
-console.log("%cInstallation complete!", "color: green");
+console.log("%c\nInstallation complete!", "color: green");
 
 console.log("%cMake sure to fill out all of the setting files!", "color: khaki");
