@@ -35,7 +35,7 @@ if (existsSync(`./${createPrShellFileName}`)) {
 
 	if (confirmCreatePRShellScript) {
 		Deno.writeTextFileSync(`./${createPrShellFileName}`, "& \"dev-tools/bin/kd-admin\" create-pr;");
-		console.log(`%cCreated '${createPrShellFileName}' file.`, "color: gray");
+		console.log(`%c\tCreated '${createPrShellFileName}' file.`, "color: gray");
 	}
 }
 
@@ -49,7 +49,7 @@ if (existsSync(`./${prepareReleaseShellFileName}`)) {
 
 	if (confirmCreatePrepareReleaseShellScript) {
 		Deno.writeTextFileSync(`./${prepareReleaseShellFileName}`, "& \"dev-tools/bin/kd-admin\" prepare-for-release;");
-		console.log(`%cCreated '${prepareReleaseShellFileName}' file.`, "color: gray");
+		console.log(`%c\tCreated '${prepareReleaseShellFileName}' file.`, "color: gray");
 	}
 }
 
@@ -70,6 +70,7 @@ if (existsSync(`./${createPrSettingsFileName}`)) {
 		};
 		
 		Deno.writeTextFileSync(`./${createPrSettingsFileName}`, `${JSON.stringify(prSettings, null, 2)}\n`);
+		console.log(`%c\tCreated '${createPrSettingsFileName}' file.`, "color: gray");
 	}
 }
 
@@ -105,6 +106,7 @@ if (existsSync(`./${prepareReleaseSettingsFileName}`)) {
 		};
 
 		Deno.writeTextFileSync(`./${prepareReleaseSettingsFileName}`, `${JSON.stringify(prepareReleaseSettings, null, 2)}\n`);
+		console.log(`%c\tCreated '${prepareReleaseSettingsFileName}' file.`, "color: gray");
 	}
 }
 
@@ -139,6 +141,7 @@ if (existsSync(`./${generateReleaseSettingsFileName}`)) {
 		};
 
 		Deno.writeTextFileSync(`./${generateReleaseSettingsFileName}`, `${JSON.stringify(genReleaseSettings, null, 2)}\n`);
+		console.log(`%c\tCreated '${generateReleaseSettingsFileName}' file.`, "color: gray");
 	}
 }
 
