@@ -47,31 +47,31 @@ export class JsonVersionUpdater {
 		if (propChain.length === 0) {
 			return [false, ""];
 		}
-	
+
 		let currentObj = obj;
-	
+
 		for (let i = 0; i < propChain.length - 1; i++) {
 			const propertyName = propChain[i];
-	
+
 			if (!(propertyName in currentObj)) {
 				return [false, `The property '${propertyName}' does not exist.`];
 			}
-	
-			if (currentObj !== null && typeof currentObj === 'object') {
+
+			if (currentObj !== null && typeof currentObj === "object") {
 				currentObj = currentObj[propertyName];
 			} else {
 				return [false, "Cannot set a value on a non-object"];
 			}
 		}
-	
+
 		const lastPropName = propChain[propChain.length - 1];
-	
+
 		if (!(lastPropName in currentObj)) {
 			return [false, `The property '${lastPropName}' does not exist.`];
 		}
-	
+
 		currentObj[lastPropName] = newValue;
-	
+
 		return [true, undefined];
 	}
 }
