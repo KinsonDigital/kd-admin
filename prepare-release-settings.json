@@ -27,5 +27,6 @@
         "prTitle": "🚀Production Release - ${VERSION}"
     }],
     "githubTokenEnvVarName": "CICD_TOKEN",
-    "versionFilePath": "./deno.json"
+    "versionFilePath": "./deno.json",
+    "versionJSONKeyPath": "version"
 }

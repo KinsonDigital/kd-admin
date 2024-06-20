@@ -34,4 +34,9 @@ export interface PrepareReleaseSettings {
 	 * @remarks If undefined, null, or empty, then the version will not be updated.
 	 */
 	versionFilePath?: string;
+
+	/**
+	 * Gets the dot separated path to the JSON key that contains the version.
+	 */
+	versionJSONKeyPath?: string;
 }

@@ -139,7 +139,7 @@ export class ReleasePrepper {
 
 		if (!Guards.isNothing(settings.versionFilePath)) {
 			try {
-				this.updateVersion(settings.versionFilePath, chosenVersion);
+				this.updateVersion(settings, chosenVersion);
 			} catch (error) {
 				console.log(crayon.lightRed(error.message));
 			}
@@ -208,22 +208,24 @@ export class ReleasePrepper {
 
 	/**
 	 * Updates the version in the version file at the given {@link versionFilePath} to the given {@link newVersion}.
-	 * @param versionFilePath The full or relative file path to the version file.
+	 * @param settings The prepare release settings.
 	 * @param newVersion The new version.
 	 */
-	private updateVersion(versionFilePath: string, newVersion: string) {
+	private updateVersion(settings: PrepareReleaseSettings, newVersion: string) {
+		const versionFilePath = settings.versionFilePath ?? "";
+
 		const extension = extname(versionFilePath).toLowerCase().trim();
 		newVersion = newVersion.trim();
 
 		switch (extension) {
 			case ".json": {
 				const jsonUpdater = new JsonVersionUpdater();
-				jsonUpdater.updateVersion(versionFilePath, newVersion);
+				jsonUpdater.updateVersion(settings, newVersion);
 				break;
 			}
 			case ".csproj": {
 				const csharpUpdater = new CSharpVersionUpdater();
-				csharpUpdater.updateVersion(versionFilePath, newVersion);
+				csharpUpdater.updateVersion(settings, newVersion);
 				break;
 			}
 			default: {
