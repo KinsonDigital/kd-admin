@@ -43,35 +43,29 @@ export class JsonVersionUpdater {
 	 * @param newValue The new value to set the last prop in the chain to.
 	 * @returns A tuple where the first item is a boolean indicating if the property was set and the second item is an error message if the property was not set.
 	 */
-	private setPropertyValue(obj: any, propChain: string[], newValue: string | number): [boolean, string | undefined] {
-		if (propChain.length === 0) {
-			return [false, ""];
-		}
-
-		let currentObj = obj;
+	private setPropertyValue<T extends { [key: string]: unknown }>(
+		obj: T,
+		propChain: string[],
+		newValue: string | number,
+	): [boolean, string | undefined] {
+		let currentObj: Record<string, unknown> = obj; // Start with the entire object
 
 		for (let i = 0; i < propChain.length - 1; i++) {
 			const propertyName = propChain[i];
-
 			if (!(propertyName in currentObj)) {
 				return [false, `The property '${propertyName}' does not exist.`];
 			}
 
-			if (currentObj !== null && typeof currentObj === "object") {
-				currentObj = currentObj[propertyName];
-			} else {
-				return [false, "Cannot set a value on a non-object"];
-			}
+			currentObj = currentObj[propertyName] as Record<string, unknown>;
 		}
 
-		const lastPropName = propChain[propChain.length - 1];
+		const finalPropName = propChain[propChain.length - 1];
 
-		if (!(lastPropName in currentObj)) {
-			return [false, `The property '${lastPropName}' does not exist.`];
+		if (finalPropName in currentObj) {
+			(currentObj as Record<string, unknown>)[finalPropName] = newValue; // Set the new value
+			return [true, undefined];
 		}
 
-		currentObj[lastPropName] = newValue;
-
-		return [true, undefined];
+		return [false, `The property '${finalPropName}' does not exist.`];
 	}
 }
