@@ -22,4 +22,3 @@ if (Deno.args.length === 0) {
 } else {
 	await command.parse(Deno.args);
 }
-

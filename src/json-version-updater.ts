@@ -40,6 +40,6 @@ export class JsonVersionUpdater {
 	private containsVersionProp(obj: unknown): obj is { version: string } {
 		return obj !== null &&
 			obj !== undefined &&
-			typeof obj === "object" &&  "version" in obj;
+			typeof obj === "object" && "version" in obj;
 	}
 }
