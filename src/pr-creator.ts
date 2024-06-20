@@ -1,9 +1,9 @@
 import { crayon, existsSync } from "../deps.ts";
 import { GitClient, IssueClient, PullRequestClient } from "../deps.ts";
 import { Input, Select } from "../deps.ts";
-import runAsync from "core/run-async.ts";
+import runAsync from "./core/run-async.ts";
 import { CreatePrSettings } from "./create-pr-settings.ts";
-import { Guards } from "core/guards.ts";
+import { Guards } from "./core/guards.ts";
 
 /**
  * Creates pull requests for a project based on settings.

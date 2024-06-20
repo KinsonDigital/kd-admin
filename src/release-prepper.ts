@@ -12,8 +12,8 @@ import {
 import { Input, Select } from "../deps.ts";
 import { crayon } from "../deps.ts";
 import { IssueOrPRRequestData } from "../deps.ts";
-import runAsync from "core/run-async.ts";
-import { Guards } from "core/guards.ts";
+import runAsync from "./core/run-async.ts";
+import { Guards } from "./core/guards.ts";
 import { PrepareReleaseSettings } from "./prepare-release-settings.ts";
 import { ReleaseType } from "./release-type.ts";
 import { ReleaseNotesGenerator } from "./release-notes-generator.ts";

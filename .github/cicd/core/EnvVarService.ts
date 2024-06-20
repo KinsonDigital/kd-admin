@@ -1,4 +1,4 @@
-import { CLI } from "core/CLI.ts";
+import { CLI } from "../../../src/core/CLI.ts";
 
 export class EnvVarService {
 	private readonly cli: CLI;

@@ -1,5 +1,5 @@
 import { existsSync } from "../deps.ts";
-import { ParamGuards } from "core/param-guards.ts";
+import { ParamGuards } from "./core/param-guards.ts";
 
 /**
  * Updates the version in a JSON file.
@@ -40,6 +40,6 @@ export class JsonVersionUpdater {
 	private containsVersionProp(obj: unknown): obj is { version: string } {
 		return obj !== null &&
 			obj !== undefined &&
-			typeof obj === "object" &&  "version" in obj;
+			typeof obj === "object" && "version" in obj;
 	}
 }

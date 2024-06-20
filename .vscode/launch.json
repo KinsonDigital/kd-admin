@@ -44,8 +44,10 @@
 			},
 			"runtimeArgs": [
 				"run",
+				"--allow-env",
+				"--allow-read",
+				"--allow-net",
 				"--inspect-wait",
-				"--allow-all"
 			],
 			"args": [
 				"create-pr",
@@ -67,8 +69,12 @@
 			},
 			"runtimeArgs": [
 				"run",
+				"--allow-env",
+				"--allow-read",
+				"--allow-write",
+				"--allow-net",
+				"--allow-run",
 				"--inspect-wait",
-				"--allow-all"
 			],
 			"args": [
 				"prepare-for-release",
@@ -143,6 +149,32 @@
 				"--inspect-wait",
 			],
 			"attachSimplePort": 9229,
+		},
+		{ // INSTALL SCRIPT
+			"request": "launch",
+			"name": "Install Script",
+			"type": "node",
+			"program": "${workspaceFolder}/installation/install.ts",
+			"cwd": "${workspaceFolder}",
+			"windows": {
+				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+			},
+			"linux": {
+				"runtimeExecutable": "${userHome}/.deno/bin/deno"
+			},
+			"runtimeArgs": [
+				"run",
+				"--allow-read",
+				"--allow-write",
+				"--allow-net",
+				"--allow-run",
+				"--inspect-wait",
+			],
+			"args": [
+				"latest",
+			],
+			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
 		}
 	]
 }

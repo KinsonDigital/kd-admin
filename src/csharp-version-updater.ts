@@ -1,4 +1,4 @@
-import { ParamGuards } from "core/param-guards.ts";
+import { ParamGuards } from "./core/param-guards.ts";
 import { existsSync } from "../deps.ts";
 
 /**
@@ -17,7 +17,7 @@ export class CSharpVersionUpdater {
 	public updateVersion(versionFilePath: string, newVersion: string) {
 		ParamGuards.isNothing(versionFilePath, "versionFilePath null, empty, or undefined.");
 		ParamGuards.isNothing(newVersion, "newVersion null, empty, or undefined.");
-		
+
 		if (!existsSync(versionFilePath, { isFile: true })) {
 			throw new Error(`The version file path '${versionFilePath}' does not exist.`);
 		}
@@ -28,17 +28,17 @@ export class CSharpVersionUpdater {
 		const fileVersionTagRegex = /<FileVersion\s*>.*<\/FileVersion\s*>/gm;
 
 		const versionTagExists = versionTagRegex.test(versionFileContent);
-		
+
 		if (!versionTagExists) {
-			const errorMsg = `The csharp project file does not contain a version property.` + 
+			const errorMsg = `The csharp project file does not contain a version property.` +
 				`\nExpected '<Version>...</Version>'`;
 			throw new Error(errorMsg);
 		}
-		
+
 		const fileVersionTagExists = fileVersionTagRegex.test(versionFileContent);
 
 		if (!fileVersionTagExists) {
-			const errorMsg = `The csharp project file does not contain a file version property.` + 
+			const errorMsg = `The csharp project file does not contain a file version property.` +
 				`\nExpected '<FileVersion>...</FileVersion>'`;
 			throw new Error(errorMsg);
 		}
