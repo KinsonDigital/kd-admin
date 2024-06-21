@@ -8,7 +8,6 @@
 - [ ] Auto-generated release notes have been reviewed and updated if necessary.
 - [ ] Manual QA Testing completed _(if applicable)_.
 - [ ] Release to **_production_** completed. _(The release is performed by running the `🚀Release` workflow)_.
-- [ ] Reusable workflow version references have been updated for the upcoming release.
 ```
 
 ### Post-Release ToDo List
