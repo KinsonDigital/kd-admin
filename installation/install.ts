@@ -179,7 +179,14 @@ const args = [
 ];
 
 console.log("   %c⏳ Installing kd-admin ...", "color: gray");
-await runAsync("deno", args);
+
+try {
+	await runAsync("deno", args);
+} catch (error) {
+	console.log(`%c${error.message}`, "color: red");
+	Deno.exit(1);
+}
+
 console.log("%c\nInstallation complete!", "color: green");
 
 console.log("%cMake sure to fill out all of the setting files!", "color: khaki");

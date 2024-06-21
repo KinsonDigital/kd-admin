@@ -175,6 +175,31 @@
 			],
 			"attachSimplePort": 9229,
 			"console": "integratedTerminal"
+		},
+		{ // UPDATE SCRIPT
+			"request": "launch",
+			"name": "Update Script",
+			"type": "node",
+			"program": "${workspaceFolder}/installation/update.ts",
+			"cwd": "${workspaceFolder}",
+			"windows": {
+				"runtimeExecutable": "${userHome}\\.deno\\bin\\deno.exe"
+			},
+			"linux": {
+				"runtimeExecutable": "${userHome}/.deno/bin/deno"
+			},
+			"runtimeArgs": [
+				"run",
+				"--allow-read",
+				"--allow-write",
+				"--allow-net",
+				"--inspect-wait",
+			],
+			"args": [
+				"latest",
+			],
+			"attachSimplePort": 9229,
+			"console": "integratedTerminal"
 		}
 	]
 }
