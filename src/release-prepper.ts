@@ -242,7 +242,7 @@ export class ReleasePrepper {
 	 */
 	private getSettings(): PrepareReleaseSettings {
 		const settingsFileName = "prepare-release-settings.json";
-		const settingsFilePath = `./${settingsFileName}`;
+		const settingsFilePath = `./dev-tools/${settingsFileName}`;
 
 		if (!existsSync(settingsFilePath, { isFile: true })) {
 			const errorMsg = `The settings file '${settingsFileName}' does not exist in the current working directory.`;
