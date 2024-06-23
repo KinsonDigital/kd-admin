@@ -8,7 +8,7 @@ export interface GeneratorSettings {
 	milestoneName: string;
 	headerText: string;
 	version?: string;
-	environment?: string;
+	releaseType?: string;
 	extraInfo?: { title: string; text: string };
 	emojisToRemoveFromTitle?: string[];
 	issueCategoryLabelMappings?: Record<string, string>;

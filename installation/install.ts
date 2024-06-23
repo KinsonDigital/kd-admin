@@ -128,7 +128,7 @@ if (existsSync(`./dev-tools/${generateReleaseSettingsFileName}`, { isFile: true 
 			githubTokenEnvVarName: "",
 			milestoneName: "",
 			headerText: "",
-			environment: "",
+			releaseType: "",
 			extraInfo: { title: "", text: "" },
 			emojisToRemoveFromTitle: [],
 			issueCategoryLabelMappings: {},
