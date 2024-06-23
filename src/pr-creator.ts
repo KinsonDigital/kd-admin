@@ -15,6 +15,9 @@ export class PrCreator {
 	constructor() {
 	}
 
+	/**
+	 * Creates a pull request using collected information from the user and settings.
+	 */
 	public async createPr(): Promise<void> {
 		const settings = this.getSettings();
 
@@ -130,7 +133,7 @@ export class PrCreator {
 	 */
 	private getSettings(): CreatePrSettings {
 		const settingsFileName = "create-pr-settings.json";
-		const settingsFilePath = `./${settingsFileName}`;
+		const settingsFilePath = `./dev-tools/${settingsFileName}`;
 
 		if (!existsSync(settingsFilePath, { isFile: true })) {
 			const errorMsg = `The settings file '${settingsFileName}' does not exist in the current working directory.`;
