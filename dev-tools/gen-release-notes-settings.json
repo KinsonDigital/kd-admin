@@ -1,0 +1,23 @@
+{
+  "ownerName": "",
+  "repoName": "",
+  "githubTokenEnvVarName": "",
+  "milestoneName": "",
+  "headerText": "",
+  "version": "",
+  "environment": "",
+  "extraInfo": {
+    "title": "",
+    "text": ""
+  },
+  "emojisToRemoveFromTitle": [],
+  "issueCategoryLabelMappings": {},
+  "prCategoryLabelMappings": {},
+  "ignoreLabels": [],
+  "wordReplacements": {},
+  "firstWordReplacements": {},
+  "styleWordsList": {},
+  "boldedVersions": true,
+  "italicVersions": true,
+  "otherCategoryName": ""
+}

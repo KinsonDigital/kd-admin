@@ -1,0 +1,21 @@
+{
+  "ownerName": "",
+  "repoName": "",
+  "orgProjectName": "",
+  "releaseTypes": [
+    {
+      "name": "",
+      "reviewer": "",
+      "assignee": "",
+      "headBranch": "",
+      "baseBranch": "",
+      "genReleaseSettingsFilePath": "",
+      "releaseNotesDirPath": "",
+      "releasePrTemplateFilePath": "",
+      "releaseLabels": [],
+      "prTitle": ""
+    }
+  ],
+  "githubTokenEnvVarName": "",
+  "versionFilePath": ""
+}
