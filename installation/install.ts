@@ -5,6 +5,7 @@ import { CreatePrSettings } from "../src/create-pr-settings.ts";
 import { PrepareReleaseSettings } from "../src/prepare-release-settings.ts";
 import { existsSync } from "../deps.ts";
 import { GeneratorSettings } from "../src/generator-settings.ts";
+import { ensureDirSync } from "https://deno.land/std@0.224.0/fs/ensure_dir.ts";
 
 const scriptArgs = Deno.args.map((arg) => arg.trim());
 
@@ -25,7 +26,9 @@ const createPrSettingsFileName = "create-pr-settings.json";
 const prepareReleaseSettingsFileName = "prepare-release-settings.json";
 const generateReleaseSettingsFileName = "gen-release-notes-settings.json";
 
-if (existsSync(`./${createPrShellFileName}`)) {
+ensureDirSync("./dev-tools");
+
+if (existsSync(`./${createPrShellFileName}`, { isFile: true })) {
 	console.log(`%c'${createPrShellFileName}' file already exists. Skipping creation.`, "color: khaki");
 } else {
 	const confirmCreatePRShellScript = await Confirm.prompt({
@@ -39,7 +42,7 @@ if (existsSync(`./${createPrShellFileName}`)) {
 	}
 }
 
-if (existsSync(`./${prepareReleaseShellFileName}`)) {
+if (existsSync(`./${prepareReleaseShellFileName}`, { isFile: true })) {
 	console.log(`%c'${prepareReleaseShellFileName}' file already exists. Skipping creation.`, "color: khaki");
 } else {
 	const confirmCreatePrepareReleaseShellScript = await Confirm.prompt({
@@ -53,7 +56,7 @@ if (existsSync(`./${prepareReleaseShellFileName}`)) {
 	}
 }
 
-if (existsSync(`./${createPrSettingsFileName}`)) {
+if (existsSync(`./dev-tools/${createPrSettingsFileName}`, { isFile: true })) {
 	console.log(`%c'${createPrSettingsFileName}' file already exists. Skipping creation.`, "color: khaki");
 } else {
 	const confirmCreatePRSettingsFile = await Confirm.prompt({
@@ -68,13 +71,13 @@ if (existsSync(`./${createPrSettingsFileName}`)) {
 			githubTokenEnvVarName: "",
 			baseBranches: []
 		};
-		
-		Deno.writeTextFileSync(`./${createPrSettingsFileName}`, `${JSON.stringify(prSettings, null, 2)}\n`);
+
+		Deno.writeTextFileSync(`./dev-tools/${createPrSettingsFileName}`, `${JSON.stringify(prSettings, null, 2)}\n`);
 		console.log(`%c\tCreated '${createPrSettingsFileName}' file.`, "color: gray");
 	}
 }
 
-if (existsSync(`./${prepareReleaseSettingsFileName}`)) {
+if (existsSync(`./dev-tools/${prepareReleaseSettingsFileName}`, { isFile: true })) {
 	console.log(`%c'${prepareReleaseSettingsFileName}' file already exists. Skipping creation.`, "color: khaki");
 } else {
 	const confirmCreatePrepareReleaseSettingFiles = await Confirm.prompt({
@@ -105,19 +108,19 @@ if (existsSync(`./${prepareReleaseSettingsFileName}`)) {
 			versionFilePath: "",
 		};
 
-		Deno.writeTextFileSync(`./${prepareReleaseSettingsFileName}`, `${JSON.stringify(prepareReleaseSettings, null, 2)}\n`);
+		Deno.writeTextFileSync(`./dev-tools/${prepareReleaseSettingsFileName}`, `${JSON.stringify(prepareReleaseSettings, null, 2)}\n`);
 		console.log(`%c\tCreated '${prepareReleaseSettingsFileName}' file.`, "color: gray");
 	}
 }
 
-if (existsSync(`./${generateReleaseSettingsFileName}`)) {
+if (existsSync(`./dev-tools/${generateReleaseSettingsFileName}`, { isFile: true })) {
 	console.log(`%c'${generateReleaseSettingsFileName}' file already exists. Skipping creation.`, "color: khaki");
 } else {
 	const confirmGenReleaseSettingsFile = await Confirm.prompt({
 		message: "Do you want to add a the generate release settings file?",
 		default: true,
 	});
-	
+
 	if (confirmGenReleaseSettingsFile) {
 		const genReleaseSettings: GeneratorSettings = {
 			ownerName: "",
@@ -140,7 +143,7 @@ if (existsSync(`./${generateReleaseSettingsFileName}`)) {
 			otherCategoryName: "",
 		};
 
-		Deno.writeTextFileSync(`./${generateReleaseSettingsFileName}`, `${JSON.stringify(genReleaseSettings, null, 2)}\n`);
+		Deno.writeTextFileSync(`./dev-tools/${generateReleaseSettingsFileName}`, `${JSON.stringify(genReleaseSettings, null, 2)}\n`);
 		console.log(`%c\tCreated '${generateReleaseSettingsFileName}' file.`, "color: gray");
 	}
 }
