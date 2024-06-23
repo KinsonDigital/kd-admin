@@ -172,6 +172,7 @@ const args = [
 	"--allow-read",
 	"--allow-write",
 	"--allow-net",
+	"--allow-run",
 	"--reload",
 	"--name",
 	"kd-admin",
