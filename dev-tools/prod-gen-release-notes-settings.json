@@ -1,0 +1,46 @@
+{
+    "ownerName": "KinsonDigital",
+    "repoName": "kd-admin",
+    "githubTokenEnvVarName": "CICD_TOKEN",
+    "milestoneName": "${VERSION}",
+    "headerText": "${REPONAME} ${ENVIRONMENT} Release Notes - ${VERSION}",
+    "environment": "Production",
+    "emojisToRemoveFromTitle": ["🚧", "🐛", "✨", "🚀", "🧪", "🔬"],
+    "issueCategoryLabelMappings": {
+        "New Features ✨": "new-feature",
+        "Enhancements ✨": "enhancement",
+        "Bug Fixes 🐛": "bug",
+        "Breaking Changes 🧨": "🧨breaking-changes",
+        "Dependency Updates 📦": "📦dependency-update"
+    },
+    "prCategoryLabelMappings": {
+        "Dependency Updates 📦": "📦dependency-update"
+    },
+    "ignoreLabels": ["🚀production-release"],
+    "wordReplacements": {
+		"chore(deps): ": ""
+	},
+	"firstWordReplacements": {
+		"Add": "Added",
+		"Improve": "Improved",
+		"Fix": "Fixed",
+		"Update": "Updated",
+		"Upgrade": "Upgraded",
+		"Create": "Created",
+		"Refactor": "Refactored",
+		"Removed": "Removed",
+		"Implement": "Implemented",
+		"Move": "Moved",
+		"Change": "Changed",
+		"Increase": "Increased",
+		"Prevent": "Prevented",
+		"Introduce": "Introduced",
+		"Adjust": "Adjusted",
+		"Replace": "Replaced",
+		"Deprecate": "Deprecated",
+		"Integrate": "Integrated"
+	},
+    "boldedVersions": true,
+    "italicVersions": true,
+    "otherCategoryName": "Other 🪧"
+}

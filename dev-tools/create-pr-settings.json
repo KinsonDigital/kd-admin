@@ -1,6 +1,9 @@
 {
-  "ownerName": "",
-  "repoName": "",
-  "githubTokenEnvVarName": "",
-  "baseBranches": []
+    "ownerName": "KinsonDigital",
+    "repoName": "kd-admin",
+    "githubTokenEnvVarName": "CICD_TOKEN",
+    "baseBranches": [
+        "main",
+        "preview"
+    ]
 }

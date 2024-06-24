@@ -231,7 +231,7 @@ export class ReleaseNotesGenerator {
 	private buildMilestoneName(settings: GeneratorSettings) {
 		return settings.milestoneName
 			.replace("${VERSION}", settings.version ?? "")
-			.replace("${ENVIRONMENT}", settings.environment ?? "")
+			.replace("${ENVIRONMENT}", settings.releaseType ?? "")
 			.replace("${REPONAME}", settings.repoName);
 	}
 
@@ -386,7 +386,7 @@ export class ReleaseNotesGenerator {
 	private createNotesHeader(settings: GeneratorSettings): string {
 		const headerText = settings.headerText
 			.replace("${VERSION}", settings.version ?? "")
-			.replace("${ENVIRONMENT}", settings.environment ?? "")
+			.replace("${ENVIRONMENT}", settings.releaseType ?? "")
 			.replace("${REPONAME}", settings.repoName);
 
 		const extraEmptyLine = settings.extraInfo === undefined ? "" : "\n";

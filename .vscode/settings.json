@@ -1,13 +1,20 @@
 {
 	"cSpell.words": [
 		"aarch",
+		"CASL",
 		"cicd",
+		"freetypesharp",
+		"imagesharp",
 		"kdcli",
 		"Kinson",
 		"LOCALAPPDATA",
+		"msbuild",
 		"msvc",
 		"Prepper",
-		"setx"
+		"REPONAME",
+		"setx",
+		"sixlabors",
+		"xunit"
 	],
 	"files.exclude": {
 		"**/.git": true,
