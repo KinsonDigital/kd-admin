@@ -1,0 +1,28 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "ownerName": {
+            "type": "string",
+            "description": "The owner of the GitHub repository."
+        },
+        "repoName": {
+            "type": "string",
+            "description": "The name of the GitHub repository."
+        },
+        "githubTokenEnvVarName": {
+            "type": "string",
+            "description": "The name of the environment variable that contains the GitHub token for the tool to use."
+        },
+        "baseBranches": {
+            "type": "array",
+            "description": "The owner of the GitHub repository.",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": ["ownerName", "repoName", "githubTokenEnvVarName", "baseBranches"]
+}

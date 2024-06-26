@@ -1,19 +1,20 @@
 {
+    "$schema": "https://raw.githubusercontent.com/KinsonDigital/kd-admin/preview/schemas/gen-release-notes-schema.json",
     "ownerName": "KinsonDigital",
     "repoName": "kd-admin",
     "githubTokenEnvVarName": "CICD_TOKEN",
     "milestoneName": "${VERSION}",
-    "headerText": "${REPONAME} ${ENVIRONMENT} Release Notes - ${VERSION}",
-    "environment": "Preview",
+    "headerText": "${REPONAME} ${RELEASETYPE} Release Notes - ${VERSION}",
+    "releaseType": "Preview",
     "extraInfo": {
         "title": "Quick Reminder",
         "text": "As with all software, there is always a chance for issues and bugs, especially for preview releases, so your input is greatly appreciated. 🙏🏼"
     },
     "emojisToRemoveFromTitle": ["🚧", "🐛", "✨", "🚀", "🧪", "🔬"],
     "issueCategoryLabelMappings": {
-        "New Features ✨": "new-feature",
-        "Enhancements ✨": "enhancement",
-        "Bug Fixes 🐛": "bug",
+        "New Features ✨": "✨new-feature",
+        "Enhancements 💎": "💎enhancement",
+        "Bug Fixes 🐛": "🐛bug",
         "Breaking Changes 🧨": "🧨breaking-changes",
         "Dependency Updates 📦": "📦dependency-update"
     },

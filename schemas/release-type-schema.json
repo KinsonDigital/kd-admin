@@ -1,0 +1,48 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of the release type."
+        },
+        "reviewer": {
+            "type": "string",
+            "description": "The pull request reviewer."
+        },
+        "assignee": {
+            "type": "string",
+            "description": "The pull request assignee."
+        },
+        "headBranch": {
+            "type": "string",
+            "description": "The head branch of the pull request."
+        },
+        "baseBranch": {
+            "type": "string",
+            "description": "The base branch of the pull request."
+        },
+        "genReleaseSettingsFilePath": {
+            "type": "string",
+            "description": "The relative path to the generate release notes settings file."
+        },
+        "releaseNotesDirPath": {
+            "type": "string",
+            "description": "The relative path to the release notes directory."
+        },
+        "releasePrTemplateFilePath": {
+            "type": "string",
+            "description": "The relative path to the release pull request template file."
+        },
+        "releaseLabels": {
+            "type": "array",
+            "description": "The labels to apply to the release pull request.",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": ["name", "headBranch", "baseBranch", "releaseNotesDirPath", "releasePrTemplateFilePath", "releaseLabels", "prTitle"]
+}

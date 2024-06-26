@@ -1,0 +1,39 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "ownerName": {
+            "type": "string",
+            "description": "The owner of the GitHub repository."
+        },
+        "repoName": {
+            "type": "string",
+            "description": "The name of the GitHub repository."
+        },
+        "orgProjectName": {
+            "type": "string",
+            "description": "The name of the GitHub organization project. This is a V2 project."
+        },
+        "releaseTypes": {
+            "type": "array",
+            "description": "The list of release types. Example: preview or production.",
+            "items": {
+                "$ref": "./release-type-schema.json"
+            },
+            "minItems": 1
+        },
+        "githubTokenEnvVarName": {
+            "type": "string",
+            "description": "The name of the environment variable that contains the GitHub token."
+        },
+        "versionFilePath": {
+            "type": "string",
+            "description": "The relative path to the file that contains the version number. Both JSON and csproj files are supported."
+        },
+        "versionJSONKeyPath": {
+            "type": "string",
+            "description": "The path to the version number in the JSON file. Only used if the file is a JSON file."
+        }
+    },
+    "required": ["ownerName", "repoName", "releaseTypes", "githubTokenEnvVarName"]
+}

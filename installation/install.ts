@@ -72,7 +72,12 @@ if (existsSync(`./dev-tools/${createPrSettingsFileName}`, { isFile: true })) {
 			baseBranches: []
 		};
 
-		Deno.writeTextFileSync(`./dev-tools/${createPrSettingsFileName}`, `${JSON.stringify(prSettings, null, 2)}\n`);
+		const settingsObj = {
+			$schema: "https://raw.githubusercontent.com/KinsonDigital/kd-admin/preview/schemas/create-pr-schema.json",
+			...prSettings
+		};
+
+		Deno.writeTextFileSync(`./dev-tools/${createPrSettingsFileName}`, `${JSON.stringify(settingsObj, null, 4)}\n`);
 		console.log(`%c\tCreated '${createPrSettingsFileName}' file.`, "color: gray");
 	}
 }
@@ -108,7 +113,12 @@ if (existsSync(`./dev-tools/${prepareReleaseSettingsFileName}`, { isFile: true }
 			versionFilePath: "",
 		};
 
-		Deno.writeTextFileSync(`./dev-tools/${prepareReleaseSettingsFileName}`, `${JSON.stringify(prepareReleaseSettings, null, 2)}\n`);
+		const settingsObj = {
+			$schema: "https://raw.githubusercontent.com/KinsonDigital/kd-admin/preview/schemas/prepare-release-schema.json",
+			...prepareReleaseSettings,
+		};
+
+		Deno.writeTextFileSync(`./dev-tools/${prepareReleaseSettingsFileName}`, `${JSON.stringify(settingsObj, null, 4)}\n`);
 		console.log(`%c\tCreated '${prepareReleaseSettingsFileName}' file.`, "color: gray");
 	}
 }
@@ -142,7 +152,12 @@ if (existsSync(`./dev-tools/${generateReleaseSettingsFileName}`, { isFile: true 
 			otherCategoryName: "",
 		};
 
-		Deno.writeTextFileSync(`./dev-tools/${generateReleaseSettingsFileName}`, `${JSON.stringify(genReleaseSettings, null, 2)}\n`);
+		const settingsObj = {
+			$schema: "https://raw.githubusercontent.com/KinsonDigital/kd-admin/preview/schemas/gen-release-notes-schema.json",
+			...genReleaseSettings,
+		};
+
+		Deno.writeTextFileSync(`./dev-tools/${generateReleaseSettingsFileName}`, `${JSON.stringify(settingsObj, null, 4)}\n`);
 		console.log(`%c\tCreated '${generateReleaseSettingsFileName}' file.`, "color: gray");
 	}
 }

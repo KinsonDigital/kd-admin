@@ -1,0 +1,123 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "ownerName": {
+            "type": "string",
+            "description": "The owner of the GitHub repository."
+        },
+        "repoName": {
+            "type": "string",
+            "description": "The name of the GitHub repository."
+        },
+        "githubTokenEnvVarName": {
+            "type": "string",
+            "description": "The name of the environment variable that contains the GitHub token."
+        },
+        "milestoneName": {
+            "type": "string",
+            "description": "The name of the milestone.  Can use the '${VERSION}' placeholder."
+        },
+        "headerText": {
+            "type": "string",
+            "description": "The header of the release notes.  Can use the `${REPONAME}`, `${RELEASETYPE}`, and  '${VERSION}' placeholders."
+        },
+        "releaseType": {
+            "type": "string",
+            "description": "The type of release. Example: Preview, Production, etc."
+        },
+        "extraInfo": {
+            "type": "object",
+            "description": "Extra information to include at the top of the release notes below the header.",
+            "required": ["title", "text"],
+            "minProperties": 2,
+            "maxProperties": 2,
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The title of the extra info section."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "The text of the extra info section."
+                }
+            }
+        },
+        "emojisToRemoveFromTitle": {
+            "type": "array",
+            "description": "The emojis to remove from the title of each release note item.",
+            "minItems": 1,
+            "items": {
+                "type": "string"
+            }
+        },
+        "issueCategoryLabelMappings": {
+            "type": "object",
+            "description": "The mappings between categories and issues labels.",
+            "minProperties": 1,
+            "patternProperties": {
+                ".+": {
+                    "type": "string"
+                }
+            }
+        },
+        "prCategoryLabelMappings": {
+            "type": "object",
+            "description": "The mappings between categories and pull request labels.",
+            "minProperties": 1,
+            "patternProperties": {
+                ".+": {
+                    "type": "string"
+                }
+            }
+        },
+        "ignoreLabels": {
+            "type": "array",
+            "description": "The emojis to remove from the title of each release note item.",
+            "minItems": 1,
+            "items": {
+                "type": "string"
+            }
+        },
+        "wordReplacements": {
+            "type": "object",
+            "description": "The word replacements to apply to the release notes.",
+            "minProperties": 1,
+            "patternProperties": {
+                ".+": {
+                    "type": "string"
+                }
+            }
+        },
+        "firstWordReplacements": {
+            "type": "object",
+            "description": "The word replacements to apply to the release notes.",
+            "minProperties": 1,
+            "patternProperties": {
+                ".+": {
+                    "type": "string"
+                }
+            }
+        },
+        "boldedVersions": {
+            "type": "boolean",
+            "description": "Whether to bold the versions in the release notes."
+        },
+        "italicVersions": {
+            "type": "boolean",
+            "description": "Whether to italicize the versions in the release notes."
+        },
+        "otherCategoryName": {
+            "type": "string",
+            "description": "The name of the category for issues and pull requests that do not have a category label."
+        }
+    },
+    "required": [
+        "ownerName",
+        "repoName",
+        "githubTokenEnvVarName",
+        "milestoneName",
+        "headerText",
+        "wordReplacements"
+    ]
+}

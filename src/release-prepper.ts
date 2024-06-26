@@ -726,7 +726,7 @@ export class ReleasePrepper {
 
 		if (templateDoesNotExist) {
 			const errorMsg = `The pr template file '${releaseType.releasePrTemplateFilePath}' does not exist.` +
-				`\nCreate a template file with the name '${releaseType.releasePrTemplateFilePath}' in the working directory.`;
+				`\nCreate a template file in the working directory.`;
 			console.log(crayon.lightRed(errorMsg));
 			Deno.exit(0);
 		}

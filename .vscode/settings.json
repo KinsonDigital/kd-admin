@@ -11,6 +11,7 @@
 		"msbuild",
 		"msvc",
 		"Prepper",
+		"RELEASETYPE",
 		"REPONAME",
 		"setx",
 		"sixlabors",

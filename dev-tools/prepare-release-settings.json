@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/KinsonDigital/kd-admin/preview/schemas/prepare-release-schema.json",
     "ownerName": "KinsonDigital",
     "repoName": "kd-admin",
     "orgProjectName": "KD-Team",
@@ -10,8 +11,8 @@
             "headBranch": "prev-release",
             "baseBranch": "preview",
             "genReleaseSettingsFilePath": "./dev-tools/prev-gen-release-notes-settings.json",
-            "releaseNotesDirPath": "./ReleaseNotes",
-            "releasePrTemplateFilePath": "./ReleaseNotes",
+            "releaseNotesDirPath": "./release-notes",
+            "releasePrTemplateFilePath": "./templates/prev-prepare-release-template.md",
             "releaseLabels": [
                 "🚀preview-release"
             ],
@@ -22,14 +23,14 @@
             "reviewer": "KinsonDigitalAdmin",
             "assignee": "CalvinWilkinson",
             "headBranch": "prod-release",
-            "baseBranch": "preview",
+            "baseBranch": "main",
             "genReleaseSettingsFilePath": "./dev-tools/prod-gen-release-notes-settings.json",
             "releaseNotesDirPath": "./release-notes",
-            "releasePrTemplateFilePath": "./release-notes",
+            "releasePrTemplateFilePath": "./templates/prod-prepare-release-template.md",
             "releaseLabels": [
-                "🚀preview-release"
+                "🚀production-release"
             ],
-            "prTitle": "🚀Preview Release (${VERSION})"
+            "prTitle": "🚀Production Release (${VERSION})"
         }
     ],
     "githubTokenEnvVarName": "CICD_TOKEN",
