@@ -25,7 +25,7 @@ export class VersionPuller {
 
 		if (configFiles.length === 0) {
 			const errorMsg = `::error::No '${this.denoConfig}' files found.`;
-			Utils.printNotice(errorMsg);
+			Utils.printGitHubNotice(errorMsg);
 			Deno.exit(1);
 		}
 
@@ -40,7 +40,7 @@ export class VersionPuller {
 			// If the object contains a property with the name version
 			if (jsonObj.version === undefined) {
 				const errorMsg = `::error::The file '${fileName}' does not contain a version property.`;
-				Utils.printError(errorMsg);
+				Utils.printGitHubError(errorMsg);
 				Deno.exit(1);
 			}
 	
