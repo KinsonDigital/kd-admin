@@ -150,8 +150,15 @@ export class PrCreator {
 		}
 
 		const settingJsonData = Deno.readTextFileSync(settingsFilePath);
+		let settings: CreatePrSettings;
 
-		const settings = JSON.parse(settingJsonData);
+		try {
+			settings = JSON.parse(settingJsonData);
+		} catch (error) {
+			const errorMsg = `There was a problem parsing the file '${settingsFileName}'.\n${error.message}`;
+			console.log(crayon.red(`${errorMsg}`));
+			Deno.exit(1);
+		}
 
 		if (!this.validSettingsObj(settings)) {
 			const errorMsg = `The settings file '${settingsFileName}' does not have the correct properties.` +

@@ -251,8 +251,15 @@ export class ReleasePrepper {
 		}
 
 		const settingJsonData = Deno.readTextFileSync(settingsFilePath);
+		let settings: PrepareReleaseSettings;
 
-		const settings = JSON.parse(settingJsonData);
+		try {
+			settings = JSON.parse(settingJsonData);
+		} catch (error) {
+			const errorMsg = `There was a problem parsing the file '${settingsFileName}'.\n${error.message}`;
+			console.log(crayon.red(`${errorMsg}`));
+			Deno.exit(1);
+		}
 
 		if (!this.validSettingsObj(settings)) {
 			const errorMsg = `The settings file '${settingsFileName}' does not have the correct properties.` +
@@ -500,7 +507,16 @@ export class ReleasePrepper {
 
 		const settingJsonData = Deno.readTextFileSync(releaseType.genReleaseSettingsFilePath);
 
-		const settings = JSON.parse(settingJsonData) as GeneratorSettings;
+		let settings: GeneratorSettings;
+
+		try {
+			settings = JSON.parse(settingJsonData);
+		} catch (error) {
+			const errorMsg = `There was a problem parsing the file '${releaseType.genReleaseSettingsFilePath}'.\n${error.message}`;
+			console.log(crayon.red(`${errorMsg}`));
+			Deno.exit(1);
+		}
+
 		settings.version = version;
 		settings.githubTokenEnvVarName = tokenEnvVarName;
 
