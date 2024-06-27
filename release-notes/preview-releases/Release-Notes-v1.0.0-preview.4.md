@@ -13,7 +13,7 @@ As with all software, there is always a chance for issues and bugs, especially f
 
 1. [#35](https://github.com/KinsonDigital/kd-admin/issues/35) - Improved issue number validation.
 2. [#31](https://github.com/KinsonDigital/kd-admin/issues/31) - Added error checking to all JSON parsing.
-3. [#41](https://github.com/KinsonDigital/kd-admin/issues/41) - Prefix generated release note files with `Release-Notes-`.
+3. [#41](https://github.com/KinsonDigital/kd-admin/issues/41) - Prefixed generated release note files with `Release-Notes-`.
 
 <h2 align="center" style="font-weight: bold;">Bug Fixes 🐛</h2>
 
