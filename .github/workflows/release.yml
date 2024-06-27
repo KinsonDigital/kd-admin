@@ -141,7 +141,7 @@ jobs:
 
           $releaseDirPrefix = $releaseType.ToLower();
           $releaseTypeDir = "$releaseDirPrefix-releases";
-          $fullReleaseNotesPath = "${{ github.workspace }}/release-notes/$releaseTypeDir/${{ needs.get_version.outputs.version }}.md";
+          $fullReleaseNotesPath = "${{ github.workspace }}/release-notes/$releaseTypeDir/Release-Notes-${{ needs.get_version.outputs.version }}.md";
 
           $isPreRelease = $releaseType -eq "Preview" ? "--prerelease" : "";
 
