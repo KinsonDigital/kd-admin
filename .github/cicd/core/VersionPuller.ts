@@ -24,7 +24,7 @@ export class VersionPuller {
 		const configFiles = [...entries].map((entry) => entry);
 
 		if (configFiles.length === 0) {
-			const errorMsg = `No '${this.denoConfig}' files found.`;
+			const errorMsg = `::error::No '${this.denoConfig}' files found.`;
 			Utils.printNotice(errorMsg);
 			Deno.exit(1);
 		}
@@ -33,15 +33,22 @@ export class VersionPuller {
 		const filePath = configFiles[0].path;
 
 		const fileData = Deno.readTextFileSync(filePath);
-		const jsonObj = JSON.parse(fileData);
 
-		// If the object contains a property with the name version
-		if (jsonObj.version === undefined) {
-			const errorMsg = `The file '${fileName}' does not contain a version property.`;
-			Utils.printError(errorMsg);
+		try {
+			const jsonObj = JSON.parse(fileData);
+	
+			// If the object contains a property with the name version
+			if (jsonObj.version === undefined) {
+				const errorMsg = `::error::The file '${fileName}' does not contain a version property.`;
+				Utils.printError(errorMsg);
+				Deno.exit(1);
+			}
+	
+			return jsonObj.version;
+		} catch (error) {
+			const errorMsg = `There was a problem parsing the file '${fileName}'.\n${error.message}`;
+			console.log(`::error::${errorMsg}`);
 			Deno.exit(1);
 		}
-
-		return jsonObj.version;
 	}
 }

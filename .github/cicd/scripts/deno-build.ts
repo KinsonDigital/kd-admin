@@ -23,9 +23,15 @@ const getSettings = (settingsFilePath: string): DenoBuildSettings | undefined=> 
 
 	const settingJsonData = Deno.readTextFileSync(settingsFilePath);
 
-	const settings = JSON.parse(settingJsonData);
-
-	return validSettingsObj(settings) ? settings : undefined;
+	try {
+		const settings = JSON.parse(settingJsonData);
+	
+		return validSettingsObj(settings) ? settings : undefined;
+	} catch (error) {
+		const errorMsg = `There was a problem parsing the file '${settingsFilePath}'.\n${error.message}`;
+		console.log(errorMsg);
+		Deno.exit(1);
+	}
 }
 
 const validSettingsObj = (settingsObj: unknown): settingsObj is DenoBuildSettings => {
