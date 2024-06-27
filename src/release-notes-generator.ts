@@ -386,7 +386,7 @@ export class ReleaseNotesGenerator {
 	private createNotesHeader(settings: GeneratorSettings): string {
 		const headerText = settings.headerText
 			.replace("${VERSION}", settings.version ?? "")
-			.replace("${ENVIRONMENT}", settings.releaseType ?? "")
+			.replace("${RELEASETYPE}", settings.releaseType ?? "")
 			.replace("${REPONAME}", settings.repoName);
 
 		const extraEmptyLine = settings.extraInfo === undefined ? "" : "\n";
