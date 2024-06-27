@@ -18,6 +18,9 @@ export class CSharpVersionUpdater {
 	public updateVersion(settings: PrepareReleaseSettings, newVersion: string) {
 		ParamGuards.isNothing(newVersion, "newVersion null, empty, or undefined.");
 
+		// Remove the letter 'v' if it exists.  C# project files do not allow the letter 'v' in the version number.
+		newVersion = newVersion.startsWith("v") ? newVersion.substring(1) : newVersion;
+
 		const versionFilePath = settings.versionFilePath ?? "";
 
 		if (!existsSync(versionFilePath, { isFile: true })) {
