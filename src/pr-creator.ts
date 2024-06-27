@@ -47,7 +47,15 @@ export class PrCreator {
 
 		const issueExists = await issueClient.issueExists(issueNumber);
 
-		if (!issueExists) {
+		if (issueExists) {
+			const issue = await issueClient.getIssue(issueNumber);
+
+			if (issue.state === "closed") {
+				const errorMsg = `The issue with number '${issueNumber}' is closed.\nPlease choose another open issue.`;
+				console.error(crayon.red(errorMsg));
+				Deno.exit(1);
+			}
+		} else {
 			const errorMsg = `An issue with number '${issueNumber}' does not exist.`;
 			console.error(crayon.red(errorMsg));
 			Deno.exit(1);
