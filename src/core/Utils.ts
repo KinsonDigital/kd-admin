@@ -1,5 +1,4 @@
 import { ParamGuards } from "./param-guards.ts";
-import { crayon } from "../../deps.ts";
 
 /**
  * Provides utility functions.
@@ -144,7 +143,7 @@ export class Utils {
 	 */
 	public static printError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(crayon.red(`::error::${message}`));
+		console.log(`::error::${message}`);
 		Utils.printEmptyLine();
 	}
 
@@ -154,7 +153,7 @@ export class Utils {
 	 */
 	public static printNotice(message: string): void {
 		Utils.printEmptyLine();
-		console.log(crayon.red(`::notice::${message}`));
+		console.log(`::notice::${message}`);
 		Utils.printEmptyLine();
 	}
 

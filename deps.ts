@@ -15,7 +15,6 @@ import { IssueModel, PullRequestModel } from "https://deno.land/x/kd_clients@v1.
 import { IssueOrPRRequestData } from "https://deno.land/x/kd_clients@v1.0.0-preview.13/core/IssueOrPRRequestData.ts";
 import { Confirm, Input, Secret, Select } from "https://deno.land/x/cliffy@v1.0.0-rc.4/prompt/mod.ts";
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.4/command/mod.ts";
-import { crayon } from "https://deno.land/x/crayon@3.3.3/mod.ts";
 
 // ----EXPORTS----
 
@@ -34,4 +33,3 @@ export type { IssueModel, PullRequestModel };
 export type { IssueOrPRRequestData };
 export { Confirm, Input, Secret, Select };
 export { Command };
-export { crayon };

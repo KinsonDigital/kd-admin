@@ -4,7 +4,7 @@ import { existsSync } from "https://deno.land/std@0.224.0/fs/exists.ts";
 import { Guards } from "../../../src/core/guards.ts";
 import { DenoBuildSettings } from "./deno-build-settings.ts";
 import { checkAll } from "./deno-check.ts";
-import { crayon } from "https://deno.land/x/crayon@3.3.3/mod.ts";
+import { ConsoleLogColor } from "../../../src/core/console-log-color.ts";
 
 let arg = (Deno.args[0] ?? "").trim();
 
@@ -54,7 +54,7 @@ const settings = getSettings(settingsFilePath);
 
 const ignores = settings?.ignoreExpressions.map((expression) => new RegExp(expression));
 
-console.log(crayon.cyan(`Checking all files in '${Deno.cwd()}' . . .\n`));
+ConsoleLogColor.cyan(`Checking all files in '${Deno.cwd()}' . . .\n`);
 
 const results = await checkAll(Deno.cwd(), {
 	noNpm: false,

@@ -10,7 +10,7 @@ import {
 	TagClient,
 } from "../deps.ts";
 import { Input, Select } from "../deps.ts";
-import { crayon } from "../deps.ts";
+import { ConsoleLogColor } from "./core/console-log-color.ts";
 import { IssueOrPRRequestData } from "../deps.ts";
 import runAsync from "./core/run-async.ts";
 import { Guards } from "./core/guards.ts";
@@ -76,7 +76,7 @@ export class ReleasePrepper {
 
 		if (chosenReleaseType === undefined) {
 			const errorMsg = `There was a problem choosing a release type.`;
-			console.log(crayon.lightRed(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 
@@ -86,7 +86,7 @@ export class ReleasePrepper {
 
 		if (repoDoesNotExist) {
 			const errorMsg = `The repository '${ownerName}/${repoName}' does not exist.`;
-			console.log(crayon.lightRed(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 
@@ -105,7 +105,7 @@ export class ReleasePrepper {
 				invalidLabels.map((label) => ` - ${label}`).join("\n") +
 				"\nThe pr labels will be left empty.⚠️";
 
-			console.log(crayon.lightRed(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 
 			Deno.exit(1);
 		}
@@ -117,20 +117,20 @@ export class ReleasePrepper {
 
 		if (milestoneDoesNotExist) {
 			const warning = `A milestone with the name '${chosenVersion}' does not exist.`;
-			console.log(crayon.lightRed(warning));
+			ConsoleLogColor.red(warning);
 			Deno.exit(1);
 		}
 
 		if (Guards.isNothing(settings.versionFilePath)) {
 			const warningMsg = "The 'versionFilePath' setting is not set.  The version will not be updated.";
-			console.log(crayon.lightYellow(warningMsg));
+			ConsoleLogColor.yellow(warningMsg);
 		} else {
 			// Validate version file exists
 			const versionFileExists = existsSync(settings.versionFilePath, { isFile: true });
 
 			if (!versionFileExists) {
 				const errorMsg = `The version file '${settings.versionFilePath}' does not exist.`;
-				console.log(crayon.lightRed(errorMsg));
+				ConsoleLogColor.red(errorMsg);
 				Deno.exit(1);
 			}
 		}
@@ -141,15 +141,15 @@ export class ReleasePrepper {
 			try {
 				this.updateVersion(settings, chosenVersion);
 			} catch (error) {
-				console.log(crayon.lightRed(error.message));
+				ConsoleLogColor.red(error.message);
 			}
 
 			// Stage version update
-			console.log(crayon.lightBlack("   ⏳Staging version update."));
+			ConsoleLogColor.gray("   ⏳Staging version update.");
 			await this.stageFile(resolve(Deno.cwd(), settings.versionFilePath));
 
 			// Commit version update
-			console.log(crayon.lightBlack("   ⏳Creating version update commit."));
+			ConsoleLogColor.gray("   ⏳Creating version update commit.");
 			await this.createCommit(`release: update version to ${chosenVersion}`);
 		}
 
@@ -158,10 +158,10 @@ export class ReleasePrepper {
 
 		// If release notes were generated, stage and commit them.
 		if (newNotesFilePath !== undefined) {
-			console.log(crayon.lightBlack("   ⏳Staging release notes."));
+			ConsoleLogColor.gray("   ⏳Staging release notes.");
 			await this.stageFile(newNotesFilePath);
 
-			console.log(crayon.lightBlack("   ⏳Creating release notes commit."));
+			ConsoleLogColor.gray("   ⏳Creating release notes commit.");
 			await this.createCommit(`release: create release notes for version ${chosenVersion}`);
 		}
 
@@ -171,11 +171,11 @@ export class ReleasePrepper {
 
 		// If a reviewer was selected, assign the pr to the selected reviewer
 		if (prReviewer !== undefined) {
-			console.log(crayon.lightBlack(`   ⏳Setting pr reviewer to '${prReviewer}'.`));
+			ConsoleLogColor.gray(`   ⏳Setting pr reviewer to '${prReviewer}'.`);
 			await this.prClient.requestReviewers(prNumber, prReviewer);
 		} else {
 			const errorMsg = `A reviewer has not been chosen. The pr will be left unassigned.`;
-			console.log(crayon.lightYellow(`⚠️${errorMsg}⚠️`));
+			ConsoleLogColor.yellow(`⚠️${errorMsg}⚠️`);
 		}
 
 		// If an assignee was selected, assign the pr to the selected assignee
@@ -190,7 +190,7 @@ export class ReleasePrepper {
 			await this.assignToProject(prNumber, orgProject);
 		} else {
 			const errorMsg = `The project '${orgProject}' does not exist.  The pr will not be assigned to a project.`;
-			console.log(crayon.lightYellow(`⚠️${errorMsg}⚠️`));
+			ConsoleLogColor.yellow(`⚠️${errorMsg}⚠️`);
 		}
 
 		// Assignee milestone to the pr
@@ -199,11 +199,11 @@ export class ReleasePrepper {
 			milestone: milestone.number,
 		};
 
-		console.log(crayon.lightBlack(`   ⏳Assigning pr to milestone '${chosenVersion}'.`));
+		ConsoleLogColor.gray(`   ⏳Assigning pr to milestone '${chosenVersion}'.`);
 		await this.prClient.updatePullRequest(prNumber, prData);
 
 		const prUrl = `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
-		console.log(crayon.lightGreen(`\nPull Request: ${prUrl}`));
+		ConsoleLogColor.green(`\nPull Request: ${prUrl}`);
 	}
 
 	/**
@@ -230,7 +230,7 @@ export class ReleasePrepper {
 			}
 			default: {
 				const errorMsg = `The file extension '${extension}' is not supported.`;
-				console.log(crayon.lightRed(errorMsg));
+				ConsoleLogColor.red(errorMsg);
 				Deno.exit(1);
 			}
 		}
@@ -246,7 +246,7 @@ export class ReleasePrepper {
 
 		if (!existsSync(settingsFilePath, { isFile: true })) {
 			const errorMsg = `The settings file '${settingsFileName}' does not exist in the current working directory.`;
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
@@ -257,7 +257,7 @@ export class ReleasePrepper {
 			settings = JSON.parse(settingJsonData);
 		} catch (error) {
 			const errorMsg = `There was a problem parsing the file '${settingsFileName}'.\n${error.message}`;
-			console.log(crayon.red(`${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
@@ -269,26 +269,26 @@ export class ReleasePrepper {
 				"\n\t- releaseTypes: { name: string, headBranch: string, baseBranch: string }[]" +
 				"\n\t- githubTokenEnvVarName: string";
 
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
 		const githubToken = (Deno.env.get(settings.githubTokenEnvVarName) ?? "").trim();
 
 		if (githubToken === "") {
-			console.log(crayon.red(`❌The environment variable '${settings.githubTokenEnvVarName}' is not set.`));
+			ConsoleLogColor.red(`The environment variable '${settings.githubTokenEnvVarName}' is not set.`);
 			Deno.exit(1);
 		}
 
 		if (Guards.isNothing(settings.ownerName)) {
 			const errorMsg = "The owner name is not set.";
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
 		if (Guards.isNothing(settings.repoName)) {
 			const errorMsg = "The repo name is not set.";
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
@@ -416,7 +416,7 @@ export class ReleasePrepper {
 
 					if (!isValid) {
 						const errorMsg = `The version '${value}' does not meet the required syntax requirements.`;
-						console.log(crayon.lightRed(errorMsg));
+						ConsoleLogColor.red(errorMsg);
 					}
 
 					return isValid;
@@ -428,7 +428,7 @@ export class ReleasePrepper {
 
 			if (tags.includes(chosenVersion)) {
 				const errorMsg = `The version '${chosenVersion}' already exists.`;
-				console.log(crayon.lightRed(errorMsg));
+				ConsoleLogColor.red(errorMsg);
 				versionExists = true;
 			} else {
 				versionExists = false;
@@ -442,7 +442,7 @@ export class ReleasePrepper {
 		const createBranchResult = await runAsync("git", ["checkout", "-B", releaseType.headBranch]);
 
 		if (createBranchResult instanceof Error) {
-			console.log(crayon.lightRed(createBranchResult.message));
+			ConsoleLogColor.red(createBranchResult.message);
 			Deno.exit(1);
 		}
 	}
@@ -452,7 +452,7 @@ export class ReleasePrepper {
 		chosenVersion: string,
 		tokenEnvVarName: string,
 	): Promise<string | undefined> {
-		console.log(crayon.lightBlack("   ⏳Creating release notes."));
+		ConsoleLogColor.gray("   ⏳Creating release notes.");
 
 		// Trim the notes dir path and replace all '\' with '/'
 		let notesDirPath = releaseType.releaseNotesDirPath.trim()
@@ -491,7 +491,7 @@ export class ReleasePrepper {
 			const warningMsg = `The 'genReleaseSettingsFilePath' setting for release type '${releaseType.name}' is not set` +
 				"\nand the 'generate release notes' process will be skipped." +
 				"\nPlease set the 'genReleaseSettingsFilePath' property in the release type settings.";
-			console.log(crayon.lightYellow(warningMsg));
+			ConsoleLogColor.yellow(warningMsg);
 
 			return undefined;
 		}
@@ -500,7 +500,7 @@ export class ReleasePrepper {
 			const warningMsg = `The release notes settings file '${releaseType.genReleaseSettingsFilePath}' does not exist.` +
 				"\nand the 'generate release notes' process will be skipped." +
 				"\nPlease set the 'genReleaseSettingsFilePath' property in the release type settings.";
-			console.log(crayon.lightYellow(warningMsg));
+			ConsoleLogColor.yellow(warningMsg);
 
 			return undefined;
 		}
@@ -512,8 +512,9 @@ export class ReleasePrepper {
 		try {
 			settings = JSON.parse(settingJsonData);
 		} catch (error) {
-			const errorMsg = `There was a problem parsing the file '${releaseType.genReleaseSettingsFilePath}'.\n${error.message}`;
-			console.log(crayon.red(`${errorMsg}`));
+			const errorMsg =
+				`There was a problem parsing the file '${releaseType.genReleaseSettingsFilePath}'.\n${error.message}`;
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
@@ -532,7 +533,7 @@ export class ReleasePrepper {
 
 		if (stageResult instanceof Error) {
 			const errorMsg = `There was an error staging the release notes file '${newNotesFilePath}'\n${stageResult.message}.`;
-			console.log(crayon.lightRed(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 	}
@@ -552,17 +553,17 @@ export class ReleasePrepper {
 		if (createCommitResult instanceof Error) {
 			const errorMsg =
 				`There was an error creating the commit with the message '${commitMsg}'\n${createCommitResult.message}.`;
-			console.log(crayon.lightRed(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 	}
 
 	private async pushToRemote(branch: string): Promise<void> {
-		console.log(crayon.lightBlack("   ⏳Pushing to remote."));
+		ConsoleLogColor.gray("   ⏳Pushing to remote.");
 		const pushToOriginResult = await runAsync("git", ["push", "--set-upstream", "origin", branch]);
 
 		if (pushToOriginResult instanceof Error) {
-			console.log(crayon.lightRed(pushToOriginResult.message));
+			ConsoleLogColor.red(pushToOriginResult.message);
 			Deno.exit(1);
 		}
 	}
@@ -578,7 +579,7 @@ export class ReleasePrepper {
 
 		let selectedAssignee = "";
 
-		console.log(crayon.lightBlack("   ⏳Fetching org members"));
+		ConsoleLogColor.gray("   ⏳Fetching org members");
 		const allOrgMembers = await this.orgClient.getAllOrgMembers();
 
 		if (selectedAssignType === "org members only") {
@@ -592,7 +593,7 @@ export class ReleasePrepper {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						console.log(crayon.lightRed("The assignee (github login) does not exist."));
+						ConsoleLogColor.red("The assignee (github login) does not exist.");
 						return false;
 					}
 
@@ -606,14 +607,14 @@ export class ReleasePrepper {
 					loginName = loginName.trim();
 
 					if (loginName.length <= 0) {
-						console.log(crayon.lightRed("The assignee cannot be empty."));
+						ConsoleLogColor.red("The assignee cannot be empty.");
 						return false;
 					}
 
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						console.log(crayon.lightRed("The assignee (github login) does not exist."));
+						ConsoleLogColor.red("The assignee (github login) does not exist.");
 						return false;
 					}
 
@@ -639,7 +640,7 @@ export class ReleasePrepper {
 
 		let selectedAssignee = "";
 
-		console.log(crayon.lightBlack("   ⏳Fetching org members"));
+		ConsoleLogColor.gray("   ⏳Fetching org members");
 		const allOrgMembers = await this.orgClient.getAllOrgMembers();
 
 		if (selectedAssignType === "org members only") {
@@ -653,7 +654,7 @@ export class ReleasePrepper {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						console.log(crayon.lightRed("The assignee (github login) does not exist."));
+						ConsoleLogColor.red("The assignee (github login) does not exist.");
 						return false;
 					}
 
@@ -667,14 +668,14 @@ export class ReleasePrepper {
 					loginName = loginName.trim();
 
 					if (loginName.length <= 0) {
-						console.log(crayon.lightRed("The assignee cannot be empty."));
+						ConsoleLogColor.red("The assignee cannot be empty.");
 						return false;
 					}
 
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						console.log(crayon.lightRed("The assignee (github login) does not exist."));
+						ConsoleLogColor.red("The assignee (github login) does not exist.");
 						return false;
 					}
 
@@ -691,7 +692,7 @@ export class ReleasePrepper {
 
 	private async getValidateLabels(labels: string[]): Promise<[boolean, string[]]> {
 		// Validate that the label exists
-		console.log(crayon.lightBlack("   ⏳Validating labels."));
+		ConsoleLogColor.gray("   ⏳Validating labels.");
 		const prLabels = labels;
 
 		return await this.allLabelsExist(prLabels);
@@ -720,13 +721,13 @@ export class ReleasePrepper {
 	}
 
 	private async projectExists(orgProject: string): Promise<boolean> {
-		console.log(crayon.lightBlack(`   ⏳Validating project '${orgProject}'.`));
+		ConsoleLogColor.gray(`   ⏳Validating project '${orgProject}'.`);
 
 		return (await this.projectClient.getOrgProjects()).find((p) => p.title === orgProject) !== undefined;
 	}
 
 	private async milestoneExists(chosenVersion: string): Promise<boolean> {
-		console.log(crayon.lightBlack(`   ⏳Validating milestone '${chosenVersion}'.`));
+		ConsoleLogColor.gray(`   ⏳Validating milestone '${chosenVersion}'.`);
 
 		return await this.milestoneClient.milestoneExists(chosenVersion);
 	}
@@ -736,20 +737,20 @@ export class ReleasePrepper {
 	 * @param chosenEnv The type of environment.  Either 'preview' or 'production'.
 	 */
 	private validatePrTemplate(releaseType: ReleaseType): void {
-		console.log(crayon.lightBlack("   ⏳Creating pr."));
+		ConsoleLogColor.gray("   ⏳Creating pr.");
 
 		const templateDoesNotExist = !existsSync(releaseType.releasePrTemplateFilePath, { isFile: true });
 
 		if (templateDoesNotExist) {
 			const errorMsg = `The pr template file '${releaseType.releasePrTemplateFilePath}' does not exist.` +
 				`\nCreate a template file in the working directory.`;
-			console.log(crayon.lightRed(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(0);
 		}
 	}
 
 	private async createPullRequest(releaseType: ReleaseType, chosenVersion: string): Promise<number> {
-		console.log(crayon.lightBlack("   ⏳Creating pr."));
+		ConsoleLogColor.gray("   ⏳Creating pr.");
 
 		// Trim the template file path and replace all '\' with '/'
 		let templateFilePath = releaseType.releasePrTemplateFilePath.trim()
@@ -761,7 +762,7 @@ export class ReleasePrepper {
 
 		if (templateDoesNotExist) {
 			const errorMsg = `The release notes template file '${templateFilePath}' does not exist.`;
-			console.log(crayon.lightRed(`${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
@@ -784,7 +785,7 @@ export class ReleasePrepper {
 			assignees: [assignee],
 		};
 
-		console.log(crayon.lightBlack(`   ⏳Setting pr assignee.`));
+		ConsoleLogColor.gray(`   ⏳Setting pr assignee.`);
 
 		await this.prClient.updatePullRequest(prNumber, prData);
 	}
@@ -794,7 +795,7 @@ export class ReleasePrepper {
 			labels: labels,
 		};
 
-		console.log(crayon.lightBlack(`   ⏳Setting pr labels.`));
+		ConsoleLogColor.gray(`   ⏳Setting pr labels.`);
 
 		await this.prClient.updatePullRequest(prNumber, prData);
 	}
@@ -807,7 +808,7 @@ export class ReleasePrepper {
 			options: orgProjects,
 			validate: (value) => {
 				if (value.length <= 0) {
-					console.log(crayon.lightRed("The project name cannot be empty."));
+					ConsoleLogColor.red("The project name cannot be empty.");
 					return false;
 				}
 
@@ -819,7 +820,7 @@ export class ReleasePrepper {
 	}
 
 	private async assignToProject(prNumber: number, project: string): Promise<void> {
-		console.log(crayon.lightBlack(`   ⏳Assigning pr to project '${project}'.`));
+		ConsoleLogColor.gray(`   ⏳Assigning pr to project '${project}'.`);
 
 		await this.projectClient.addPullRequestToProject(prNumber, project);
 	}
