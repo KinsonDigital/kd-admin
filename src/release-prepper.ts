@@ -475,7 +475,7 @@ export class ReleasePrepper {
 			Deno.mkdirSync(notesDirPath, { recursive: true });
 		}
 
-		const newNotesFilePath = `${notesDirPath}/${chosenVersion}.md`;
+		const newNotesFilePath = `${notesDirPath}/Release-Notes-${chosenVersion}.md`;
 
 		Deno.writeTextFileSync(newNotesFilePath, releaseNotesFileContent, { create: true });
 
