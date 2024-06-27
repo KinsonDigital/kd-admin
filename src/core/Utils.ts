@@ -1,5 +1,4 @@
 import { ParamGuards } from "./param-guards.ts";
-import { crayon } from "../../deps.ts";
 
 /**
  * Provides utility functions.
@@ -142,9 +141,9 @@ export class Utils {
 	 * Prints the given {@link message} as a GitHub error.
 	 * @param message The message to print.
 	 */
-	public static printError(message: string): void {
+	public static printGitHubError(message: string): void {
 		Utils.printEmptyLine();
-		console.log(crayon.red(`::error::${message}`));
+		console.log(`::error::${message}`);
 		Utils.printEmptyLine();
 	}
 
@@ -152,9 +151,9 @@ export class Utils {
 	 * Prints the given {@link message} as a GitHub notice.
 	 * @param message The message to print.
 	 */
-	public static printNotice(message: string): void {
+	public static printGitHubNotice(message: string): void {
 		Utils.printEmptyLine();
-		console.log(crayon.red(`::notice::${message}`));
+		console.log(`::notice::${message}`);
 		Utils.printEmptyLine();
 	}
 

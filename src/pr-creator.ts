@@ -1,9 +1,10 @@
-import { crayon, existsSync } from "../deps.ts";
+import { existsSync } from "../deps.ts";
 import { GitClient, IssueClient, PullRequestClient } from "../deps.ts";
 import { Input, Select } from "../deps.ts";
 import runAsync from "./core/run-async.ts";
 import { CreatePrSettings } from "./create-pr-settings.ts";
 import { Guards } from "./core/guards.ts";
+import { ConsoleLogColor } from "./core/console-log-color.ts";
 
 /**
  * Creates pull requests for a project based on settings.
@@ -43,7 +44,7 @@ export class PrCreator {
 		// Issue number validation
 		const issueClient = new IssueClient(ownerName, repoName, githubToken);
 
-		console.log(crayon.lightBlack(`Checking if issue '#${issueNumber}' exists . . .`));
+		ConsoleLogColor.gray(`Checking if issue '#${issueNumber}' exists . . .`);
 
 		const issueExists = await issueClient.issueExists(issueNumber);
 
@@ -52,16 +53,16 @@ export class PrCreator {
 
 			if (issue.state === "closed") {
 				const errorMsg = `The issue with number '${issueNumber}' is closed.\nPlease choose another open issue.`;
-				console.error(crayon.red(errorMsg));
+				ConsoleLogColor.red(errorMsg);
 				Deno.exit(1);
 			}
 		} else {
 			const errorMsg = `An issue with number '${issueNumber}' does not exist.`;
-			console.error(crayon.red(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 
-		console.log(crayon.lightBlack(`Issue '#${issueNumber}' exists.`));
+		ConsoleLogColor.gray(`Issue '#${issueNumber}' exists.`);
 
 		const chosenHeadBranch = await Input.prompt({
 			message: "Enter a head branch name",
@@ -77,17 +78,17 @@ export class PrCreator {
 		});
 
 		// Head branch validation
-		console.log(crayon.lightBlack(`Checking that the head branch '${chosenHeadBranch}' does not already exist . . .`));
+		ConsoleLogColor.gray(`Checking that the head branch '${chosenHeadBranch}' does not already exist . . .`);
 		const branchRegex = /^feature\/([1-9][0-9]*)-(?!-)[a-z-]+$/gm;
 
 		if (!branchRegex.test(chosenHeadBranch)) {
 			const errorMsg =
 				`The head branch name '${chosenHeadBranch}' is invalid. It should match the pattern: 'feature/<issue-number>-<branch-name>'`;
-			console.error(crayon.red(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 
-		console.log(crayon.lightBlack(`Head branch name '${chosenHeadBranch}' does not exist.`));
+		ConsoleLogColor.gray(`Head branch name '${chosenHeadBranch}' does not exist.`);
 
 		const gitClient = new GitClient(ownerName, repoName, githubToken);
 
@@ -95,7 +96,7 @@ export class PrCreator {
 
 		if (headBranchExists) {
 			const errorMsg = `The head branch '${chosenHeadBranch}' exists in the remote repository.`;
-			console.error(crayon.red(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 
@@ -106,33 +107,33 @@ export class PrCreator {
 			validate: (branch) => baseBranches.includes(branch),
 		});
 
-		console.log(crayon.lightBlack(`Checking that the base branch '${chosenBaseBranch}' exists . . .`));
+		ConsoleLogColor.gray(`Checking that the base branch '${chosenBaseBranch}' exists . . .`);
 		const branchExists = await gitClient.branchExists(chosenBaseBranch);
 
 		if (!branchExists) {
 			const errorMsg = `The branch '${chosenBaseBranch}' does not exist in the remote repository.`;
-			console.error(crayon.red(errorMsg));
+			ConsoleLogColor.red(errorMsg);
 			Deno.exit(1);
 		}
 
-		console.log(crayon.lightBlack(`Base branch '${chosenBaseBranch}' exists.`));
+		ConsoleLogColor.gray(`Base branch '${chosenBaseBranch}' exists.`);
 
-		console.log(crayon.lightBlack(`Creating the new head branch '${chosenHeadBranch}' . . .`));
+		ConsoleLogColor.gray(`Creating the new head branch '${chosenHeadBranch}' . . .`);
 		await runAsync("git", ["checkout", "-B", chosenHeadBranch]);
 
-		console.log(crayon.lightBlack(`Creating empty commit . . .`));
+		ConsoleLogColor.gray(`Creating empty commit . . .`);
 		await runAsync("git", ["commit", "--allow-empty", "-m", `Start work for issue #${issueNumber}`]);
 
-		console.log(crayon.lightBlack(`Pushing the new head branch '${chosenHeadBranch}' to remote . . .`));
+		ConsoleLogColor.gray(`Pushing the new head branch '${chosenHeadBranch}' to remote . . .`);
 		await runAsync("git", ["push", "--set-upstream", "origin", chosenHeadBranch]);
 
-		console.log(crayon.lightBlack(`Creating pull request . . .`));
+		ConsoleLogColor.gray(`Creating pull request . . .`);
 		const prClient = new PullRequestClient(ownerName, repoName, githubToken);
 		const newPr = await prClient.createPullRequest("new pr", chosenHeadBranch, chosenBaseBranch, "", true, true);
 
 		const successMsg = `Pull request created successfully!\nPR: ${newPr.html_url}`;
 
-		console.log(crayon.lightGreen(successMsg));
+		ConsoleLogColor.green(successMsg);
 	}
 
 	/**
@@ -145,13 +146,20 @@ export class PrCreator {
 
 		if (!existsSync(settingsFilePath, { isFile: true })) {
 			const errorMsg = `The settings file '${settingsFileName}' does not exist in the current working directory.`;
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
 		const settingJsonData = Deno.readTextFileSync(settingsFilePath);
+		let settings: CreatePrSettings;
 
-		const settings = JSON.parse(settingJsonData);
+		try {
+			settings = JSON.parse(settingJsonData);
+		} catch (error) {
+			const errorMsg = `There was a problem parsing the file '${settingsFileName}'.\n${error.message}`;
+			ConsoleLogColor.red(`${errorMsg}`);
+			Deno.exit(1);
+		}
 
 		if (!this.validSettingsObj(settings)) {
 			const errorMsg = `The settings file '${settingsFileName}' does not have the correct properties.` +
@@ -161,32 +169,32 @@ export class PrCreator {
 				"\n\t- baseBranches: string[]" +
 				"\n\t- githubTokenEnvVarName: string";
 
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
 		const githubToken = (Deno.env.get(settings.githubTokenEnvVarName) ?? "").trim();
 
 		if (githubToken === "") {
-			console.log(crayon.red(`❌The environment variable '${settings.githubTokenEnvVarName}' is not set.`));
+			ConsoleLogColor.red(`The environment variable '${settings.githubTokenEnvVarName}' is not set.`);
 			Deno.exit(1);
 		}
 
 		if (Guards.isNothing(settings.ownerName)) {
 			const errorMsg = "The owner name is not set.";
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
 		if (Guards.isNothing(settings.repoName)) {
 			const errorMsg = "The repo name is not set.";
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 
 		if (Guards.isNothing(settings.baseBranches)) {
 			const errorMsg = "The base branches are not set.";
-			console.log(crayon.red(`❌${errorMsg}`));
+			ConsoleLogColor.red(`${errorMsg}`);
 			Deno.exit(1);
 		}
 

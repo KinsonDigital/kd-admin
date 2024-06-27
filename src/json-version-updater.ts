@@ -12,7 +12,7 @@ export class JsonVersionUpdater {
 	 * @param newVersion The new version.
 	 * @throws {Error} Thrown if the version file does not exist or the version file does not contain a 'version' property.
 	 */
-	public updateVersion(settings: PrepareReleaseSettings, newVersion: string) {
+	public updateVersion(settings: PrepareReleaseSettings, newVersion: string): void {
 		ParamGuards.isNothing(newVersion, "newVersion null, empty, or undefined.");
 
 		const versionFilePath = settings.versionFilePath ?? "";
@@ -22,18 +22,24 @@ export class JsonVersionUpdater {
 		}
 
 		const versionFileContent = Deno.readTextFileSync(versionFilePath);
-		const versionConfig = JSON.parse(versionFileContent);
 
-		const propChain = settings.versionJSONKeyPath?.split(".").map((i) => i.trim()) ?? ["version"];
+		try {
+			const versionConfig = JSON.parse(versionFileContent);
+			const propChain = settings.versionJSONKeyPath?.split(".").map((i) => i.trim()) ?? ["version"];
 
-		const result = this.setPropertyValue(versionConfig, propChain, newVersion);
+			const result = this.setPropertyValue(versionConfig, propChain, newVersion);
 
-		if (result[0] === false) {
-			console.log(`%c${result[1]}`, "color: red;");
+			if (result[0] === false) {
+				console.log(`%c${result[1]}`, "color: red;");
+				Deno.exit(1);
+			}
+
+			Deno.writeTextFileSync(versionFilePath, `${JSON.stringify(versionConfig, null, 4)}\n`);
+		} catch (error) {
+			const errorMsg = `There was a problem parsing the file '${versionFilePath}'.\n${error.message}`;
+			console.log(`%c${errorMsg}`, "color: red;");
 			Deno.exit(1);
 		}
-
-		Deno.writeTextFileSync(versionFilePath, `${JSON.stringify(versionConfig, null, 4)}\n`);
 	}
 
 	/**
