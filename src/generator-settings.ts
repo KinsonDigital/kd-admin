@@ -7,6 +7,7 @@ export interface GeneratorSettings {
 	githubTokenEnvVarName: string;
 	milestoneName: string;
 	headerText: string;
+	wordReplacements: Record<string, string>;
 	version?: string;
 	releaseType?: string;
 	extraInfo?: { title: string; text: string };
@@ -14,7 +15,6 @@ export interface GeneratorSettings {
 	issueCategoryLabelMappings?: Record<string, string>;
 	prCategoryLabelMappings?: Record<string, string>;
 	ignoreLabels?: string[];
-	wordReplacements: Record<string, string>;
 	firstWordReplacements?: Record<string, string>;
 	styleWordsList?: Record<string, string>;
 	boldedVersions?: boolean;
