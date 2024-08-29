@@ -5,7 +5,7 @@ import { existsSync, walkSync } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { extname, resolve } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { assert, assertEquals, assertThrows, assertRejects, equal } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { assertSpyCall, assertSpyCalls, spy, stub, returnsNext, returnsArg } from "https://deno.land/std@0.224.0/testing/mock.ts";
-import { toText } from "https://deno.land/std@0.218.2/streams/mod.ts";
+import { toText } from "https://deno.land/std@0.224.0/streams/mod.ts";
 
 // Third Party Deno Modules
 import { RepoClient, TagClient, UsersClient, PullRequestClient, IssueClient,
