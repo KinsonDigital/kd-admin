@@ -1,5 +1,5 @@
-name: ✅Build Status Check
-run-name: ✅Build Status Check (${{ github.base_ref }} branch)
+name: ✅Check Status Check
+run-name: ✅Check Status Check (${{ github.base_ref }} branch)
 
 
 defaults:
@@ -29,6 +29,5 @@ jobs:
       with:
         deno-version: ${{ vars.DENO_VERSION }}
 
-    - name: Run Build
-      run: |
-        deno run --allow-read --allow-run "./.github/cicd/scripts/deno-build.ts";
+    - name: Run Check
+      run: deno check **/*/*.ts;

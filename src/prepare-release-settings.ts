@@ -15,11 +15,6 @@ export interface PrepareReleaseSettings {
 	repoName: string;
 
 	/**
-	 * Gets the name of the organization project.
-	 */
-	orgProjectName?: string;
-
-	/**
 	 * Gets the list of release types.
 	 */
 	releaseTypes: ReleaseType[];
@@ -28,6 +23,11 @@ export interface PrepareReleaseSettings {
 	 * Gets the name of the name of the environment name for the GitHub token.
 	 */
 	githubTokenEnvVarName: string;
+
+	/**
+	 * Gets the name of the organization project.
+	 */
+	orgProjectName?: string;
 
 	/**
 	 * Gets the full or relative file path to the version file.
@@ -39,4 +39,9 @@ export interface PrepareReleaseSettings {
 	 * Gets the dot separated path to the JSON key that contains the version.
 	 */
 	versionJSONKeyPath?: string;
+
+	/**
+	 * Gets the value to prefix the release notes file name with.
+	 */
+	releaseNotesFilePrefix?: string;
 }

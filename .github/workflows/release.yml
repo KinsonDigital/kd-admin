@@ -43,7 +43,7 @@ jobs:
         run: |
           $scriptPath = "${{ github.workspace }}/.github/cicd/scripts/get-version.ts";
 
-          deno run --allow-read --allow-write --allow-env "$scriptPath";
+          deno run -R -W -E "$scriptPath";
 
 
   validate_release:
@@ -90,7 +90,10 @@ jobs:
         run: |
           $scriptPath = "${{ github.workspace }}/.github/cicd/scripts/version-checker.ts";
 
-          deno run --allow-env --allow-net --allow-read "$scriptPath";
+          deno run `
+          -E `
+          -N=raw.githubusercontent.com,github.com `
+          -R "$scriptPath";
 
       - name: Release Notes Exist
         env:
@@ -99,7 +102,7 @@ jobs:
         run: |
           $scriptPath = "${{ github.workspace }}/.github/cicd/scripts/check-release-notes.ts";
 
-          deno run --allow-env --allow-read "$scriptPath";
+          deno run -E -R "$scriptPath";
 
 
   release:
@@ -115,14 +118,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run Build
-        run: deno run --allow-read --allow-run ./.github/cicd/scripts/deno-build.ts
+      - name: Run Check
+        run: deno check **/*/*.ts;
 
       - name: Run Lint
         run: deno lint
 
       - name: Run Tests
-        run: deno test --allow-read ./tests/*Tests.ts;
+        run: deno test -R ./tests/*Tests.ts;
 
       - name: Create GitHub Release ${{ inputs.dry-run == true && '(Dry Run)' || '' }}
         if: ${{ inputs.dry-run == false }}
@@ -171,7 +174,8 @@ jobs:
             3. PAT
           #>
           deno run `
-            --allow-read --allow-net `
+            -R `
+            -N=raw.githubusercontent.com,github.com `
             "$scriptUrl" `
             "${{ vars.PROJECT_NAME }}" `
             "${{ needs.get_version.outputs.version }}" `
