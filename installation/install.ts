@@ -182,12 +182,13 @@ if (version === "latest") {
 
 const args = [
 	"install",
-	"--allow-env",
-	"--allow-read",
-	"--allow-write",
-	"--allow-net",
+	"-R",
+	"-W",
+	"-E",
+	"-N",
 	"--allow-run",
 	"--reload",
+	"--no-lock",
 	"--name",
 	"kd-admin",
 	"--root",
