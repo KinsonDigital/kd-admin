@@ -29,4 +29,4 @@ jobs:
         deno-version: ${{ vars.DENO_VERSION }}
 
     - name: Run Tests
-      run: deno test --allow-read ./tests/*Tests.ts;
+      run: deno test -R ./tests/*Tests.ts;
