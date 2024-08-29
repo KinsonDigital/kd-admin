@@ -608,7 +608,7 @@ export class ReleasePrepper {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						ConsoleLogColor.red("The assignee (github login) does not exist.");
+						ConsoleLogColor.red(`The assignee '${loginName}' does not exist.`);
 						return false;
 					}
 
@@ -629,7 +629,7 @@ export class ReleasePrepper {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						ConsoleLogColor.red("The assignee (github login) does not exist.");
+						ConsoleLogColor.red(`The assignee '${loginName}' does not exist.`);
 						return false;
 					}
 
@@ -669,7 +669,7 @@ export class ReleasePrepper {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						ConsoleLogColor.red("The assignee (github login) does not exist.");
+						ConsoleLogColor.red(`The assignee '${loginName}' does not exist.`);
 						return false;
 					}
 
@@ -690,7 +690,7 @@ export class ReleasePrepper {
 					const memberExists = allOrgMembers.find((member) => member.login === loginName);
 
 					if (memberExists === undefined) {
-						ConsoleLogColor.red("The assignee (github login) does not exist.");
+						ConsoleLogColor.red(`The assignee '${loginName}' does not exist.`);
 						return false;
 					}
 
