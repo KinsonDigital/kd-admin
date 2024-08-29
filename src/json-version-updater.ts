@@ -30,7 +30,7 @@ export class JsonVersionUpdater {
 			const result = this.setPropertyValue(versionConfig, propChain, newVersion);
 
 			if (result[0] === false) {
-				console.log(`%c${result[1]}`, "color: red;");
+				console.log(`%cError with file '${versionFilePath}':\t${result[1]}`, "color: red;");
 				Deno.exit(1);
 			}
 
