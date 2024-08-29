@@ -188,6 +188,7 @@ const args = [
 	"--allow-net",
 	"--allow-run",
 	"--reload",
+	"--no-lock",
 	"--name",
 	"kd-admin",
 	"--root",
