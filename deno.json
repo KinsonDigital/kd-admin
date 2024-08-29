@@ -3,7 +3,7 @@
     "tasks": {
         "build": "./.github/cicd/scripts/deno-build.ts",
         "tests": "deno test ./Tests/*Tests.ts",
-        "reload-cache": "deno cache --reload --lock=deno.lock --lock-write \"./deps.ts\""
+        "reload-cache": "deno cache --reload --lock=deno.lock \"*/**/*.ts\""
     },
     "lint": {
         "include": [
