@@ -118,8 +118,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run Build
-        run: deno run -R --allow-run ./.github/cicd/scripts/deno-build.ts
+      - name: Run Check
+        run: deno check **/*/*.ts;
 
       - name: Run Lint
         run: deno lint

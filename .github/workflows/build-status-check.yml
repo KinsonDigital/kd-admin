@@ -29,6 +29,5 @@ jobs:
       with:
         deno-version: ${{ vars.DENO_VERSION }}
 
-    - name: Run Build
-      run: |
-        deno run -R --allow-run "./.github/cicd/scripts/deno-build.ts";
+    - name: Run Check
+      run: deno check **/*/*.ts;
