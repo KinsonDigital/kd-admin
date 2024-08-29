@@ -33,6 +33,10 @@
         "versionJSONKeyPath": {
             "type": "string",
             "description": "The path to the version number in the JSON file. Only used if the file is a JSON file. (Optional)"
+        },
+        "releaseNotesFilePrefix": {
+            "type": "string",
+            "description": "The path to the version number in the JSON file. Only used if the file is a JSON file. (Optional)"
         }
     },
     "required": ["ownerName", "repoName", "releaseTypes", "githubTokenEnvVarName"]

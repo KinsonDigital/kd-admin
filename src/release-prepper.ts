@@ -154,7 +154,12 @@ export class ReleasePrepper {
 		}
 
 		// Generate the release notes
-		const newNotesFilePath = await this.createReleaseNotes(chosenReleaseType, chosenVersion, settings.githubTokenEnvVarName);
+		const newNotesFilePath = await this.createReleaseNotes(
+			chosenReleaseType,
+			chosenVersion,
+			settings.githubTokenEnvVarName,
+			settings.releaseNotesFilePrefix,
+		);
 
 		// If release notes were generated, stage and commit them.
 		if (newNotesFilePath !== undefined) {
@@ -447,16 +452,24 @@ export class ReleasePrepper {
 		}
 	}
 
+	/**
+	 * Creates release notes based on the given {@link releaseType} and {@link chosenVersion}.
+	 * @param releaseType The type of release.
+	 * @param chosenVersion The version.
+	 * @param tokenEnvVarName The name of the environment variable that contains the GitHub token.
+	 * @param fileNamePrefix The value to prefix the notes file name with.
+	 * @returns The release notes.
+	 */
 	private async createReleaseNotes(
 		releaseType: ReleaseType,
 		chosenVersion: string,
 		tokenEnvVarName: string,
+		fileNamePrefix?: string,
 	): Promise<string | undefined> {
 		ConsoleLogColor.gray("   ⏳Creating release notes.");
 
 		// Trim the notes dir path and replace all '\' with '/'
-		let notesDirPath = releaseType.releaseNotesDirPath.trim()
-			.replace(/\\/g, "/");
+		let notesDirPath = releaseType.releaseNotesDirPath.trim().replace(/\\/g, "/");
 
 		notesDirPath = notesDirPath.endsWith("/") ? notesDirPath.slice(0, -1) : notesDirPath;
 
@@ -475,7 +488,9 @@ export class ReleasePrepper {
 			Deno.mkdirSync(notesDirPath, { recursive: true });
 		}
 
-		const newNotesFilePath = `${notesDirPath}/Release-Notes-${chosenVersion}.md`;
+		const prefix = Guards.isNothing(fileNamePrefix) ? "" : fileNamePrefix;
+
+		const newNotesFilePath = `${notesDirPath}/${prefix}${chosenVersion}.md`;
 
 		Deno.writeTextFileSync(newNotesFilePath, releaseNotesFileContent, { create: true });
 

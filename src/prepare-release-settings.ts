@@ -39,4 +39,9 @@ export interface PrepareReleaseSettings {
 	 * Gets the dot separated path to the JSON key that contains the version.
 	 */
 	versionJSONKeyPath?: string;
+
+	/**
+	 * Gets the value to prefix the release notes file name with.
+	 */
+	releaseNotesFilePrefix?: string;
 }
