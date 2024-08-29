@@ -44,7 +44,7 @@ jobs:
             5. PAT
           #>
           deno run `
-            -N=raw.githubusercontent.com,github.com `
+            -N `
             "$scriptUrl" `
             "${{ vars.ORGANIZATION_NAME }}" `
             "${{ vars.PROJECT_NAME }}" `
