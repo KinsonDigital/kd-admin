@@ -24,5 +24,10 @@
             }
         }
     },
-    "required": ["ownerName", "repoName", "githubTokenEnvVarName", "baseBranches"]
+    "required": [
+        "ownerName",
+        "repoName",
+        "githubTokenEnvVarName",
+        "baseBranches"
+    ]
 }

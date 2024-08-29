@@ -22,13 +22,23 @@
             "type": "string",
             "description": "The header of the release notes.  Can use the `${REPONAME}`, `${RELEASETYPE}`, and  '${VERSION}' placeholders."
         },
+        "wordReplacements": {
+            "type": "object",
+            "description": "The word replacements to apply to the release notes.",
+            "minProperties": 1,
+            "patternProperties": {
+                ".+": {
+                    "type": "string"
+                }
+            }
+        },
         "releaseType": {
             "type": "string",
-            "description": "The type of release. Example: Preview, Production, etc."
+            "description": "The type of release. Example: Preview, Production, etc. (Optional)"
         },
         "extraInfo": {
             "type": "object",
-            "description": "Extra information to include at the top of the release notes below the header.",
+            "description": "Extra information to include at the top of the release notes below the header. (Optional)",
             "required": ["title", "text"],
             "minProperties": 2,
             "maxProperties": 2,
@@ -45,7 +55,7 @@
         },
         "emojisToRemoveFromTitle": {
             "type": "array",
-            "description": "The emojis to remove from the title of each release note item.",
+            "description": "The emojis to remove from the title of each release note item. (Optional)",
             "minItems": 1,
             "items": {
                 "type": "string"
@@ -53,7 +63,7 @@
         },
         "issueCategoryLabelMappings": {
             "type": "object",
-            "description": "The mappings between categories and issues labels.",
+            "description": "The mappings between categories and issues labels. (Optional)",
             "minProperties": 1,
             "patternProperties": {
                 ".+": {
@@ -63,7 +73,7 @@
         },
         "prCategoryLabelMappings": {
             "type": "object",
-            "description": "The mappings between categories and pull request labels.",
+            "description": "The mappings between categories and pull request labels. (Optional)",
             "minProperties": 1,
             "patternProperties": {
                 ".+": {
@@ -73,25 +83,15 @@
         },
         "ignoreLabels": {
             "type": "array",
-            "description": "The emojis to remove from the title of each release note item.",
+            "description": "The emojis to remove from the title of each release note item. (Optional)",
             "minItems": 1,
             "items": {
                 "type": "string"
             }
         },
-        "wordReplacements": {
-            "type": "object",
-            "description": "The word replacements to apply to the release notes.",
-            "minProperties": 1,
-            "patternProperties": {
-                ".+": {
-                    "type": "string"
-                }
-            }
-        },
         "firstWordReplacements": {
             "type": "object",
-            "description": "The word replacements to apply to the release notes.",
+            "description": "The word replacements to apply to the release notes. (Optional)",
             "minProperties": 1,
             "patternProperties": {
                 ".+": {
@@ -101,15 +101,15 @@
         },
         "boldedVersions": {
             "type": "boolean",
-            "description": "Whether to bold the versions in the release notes."
+            "description": "Whether to bold the versions in the release notes (Optional)."
         },
         "italicVersions": {
             "type": "boolean",
-            "description": "Whether to italicize the versions in the release notes."
+            "description": "Whether to italicize the versions in the release notes (Optional)."
         },
         "otherCategoryName": {
             "type": "string",
-            "description": "The name of the category for issues and pull requests that do not have a category label."
+            "description": "The name of the category for issues and pull requests that do not have a category label (Optional)."
         }
     },
     "required": [
