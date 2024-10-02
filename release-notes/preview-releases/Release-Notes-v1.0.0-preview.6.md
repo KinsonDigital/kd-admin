@@ -11,4 +11,4 @@ As with all software, there is always a chance for issues and bugs, especially f
 
 <h2 align="center" style="font-weight: bold;">New Features ✨</h2>
 
-1. [#50](https://github.com/KinsonDigital/kd-admin/issues/50) - Added a new prep release setting.
+1. [#50](https://github.com/KinsonDigital/kd-admin/issues/50) - Added a new optional prepare release setting with the name `trimFromStartOfVersion` to trim string values from the beginning of the version.
