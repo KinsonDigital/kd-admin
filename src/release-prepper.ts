@@ -410,7 +410,11 @@ export class ReleasePrepper {
 		return true;
 	}
 
-	private async getAndValidateVersion(): Promise<string> {
+	/**
+	 * Gets the version from the user and trims and validates the version.
+	 * @param settings The prepare release settings.
+	 * @returns The validated and trimmed version.
+	 */
 	private async getAndValidateVersion(settings: PrepareReleaseSettings): Promise<string> {
 		let chosenVersion = "";
 
@@ -456,6 +460,10 @@ export class ReleasePrepper {
 		return chosenVersion;
 	}
 
+	/**
+	 * Creates a release branch based on the given {@link releaseType}.
+	 * @param releaseType The type of release.
+	 */
 	private async createReleaseBranch(releaseType: ReleaseType): Promise<void> {
 		const createBranchResult = await runAsync("git", ["checkout", "-B", releaseType.headBranch]);
 
