@@ -3,19 +3,19 @@ import { walkSync } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { TagClient } from "https://deno.land/x/kd_clients@v1.0.0-preview.13/GitHubClients/TagClient.ts";
 
 const baseDirPath = "./dev-tools/bin";
-const filesToUpdate = [...walkSync(baseDirPath, { includeFiles: true, match: [/kd-admin/]})].map((f) => f.path);
+const filesToUpdate = [...walkSync(baseDirPath, { includeFiles: true, match: [/kd-admin/] })].map((f) => f.path);
 
 const tagClient = new TagClient("KinsonDigital", "kd-admin");
 const tags: string[] = (await tagClient.getAllTags()).map((t) => t.name);
 const latestVersion = tags[0];
 
-filesToUpdate.forEach(async file => {
-	await updateFile(file);
+filesToUpdate.forEach((file) => {
+	updateFile(file);
 });
 
 console.log(`%ckd-admin has been updated to version '${latestVersion}'.`, "color: green");
 
-async function updateFile (filePath: string) {
+function updateFile(filePath: string) {
 	const isInstalled = existsSync(filePath, { isFile: true });
 
 	if (!isInstalled) {
@@ -28,7 +28,7 @@ async function updateFile (filePath: string) {
 
 	const urlLine = fileLines.find((line) => line.includes("deno") && line.includes("https://"));
 
-	const corruptErrorMsg  = `%cThe file '${filePath}' is corrupted. Please reinstall the script.`;
+	const corruptErrorMsg = `%cThe file '${filePath}' is corrupted. Please reinstall the script.`;
 
 	if (urlLine === undefined) {
 		console.log(corruptErrorMsg, "color: red");
@@ -70,10 +70,9 @@ async function updateFile (filePath: string) {
 		return section;
 	});
 
-
 	const newUrlLine = newSections.join(" ");
 
-	const newFileLines = fileLines.map((line) =>  {
+	const newFileLines = fileLines.map((line) => {
 		if (line.includes("deno") && line.includes("https://")) {
 			return newUrlLine;
 		}
@@ -84,4 +83,4 @@ async function updateFile (filePath: string) {
 	const newFileContent = newFileLines.join("\n");
 
 	Deno.writeTextFileSync(filePath, newFileContent);
-};
+}

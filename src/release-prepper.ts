@@ -80,7 +80,7 @@ export class ReleasePrepper {
 			Deno.exit(1);
 		}
 
-		const chosenVersion = await this.getAndValidateVersion();
+		const chosenVersion = await this.getAndValidateVersion(settings);
 
 		const repoDoesNotExist = !(await this.repoClient.exists());
 
@@ -199,12 +199,13 @@ export class ReleasePrepper {
 		}
 
 		// Assignee milestone to the pr
-		const milestone = await this.milestoneClient.getMilestoneByName(chosenVersion);
+		const milestoneTitle = chosenVersion.startsWith("v") ? chosenVersion : `v${chosenVersion}`;
+		const milestone = await this.milestoneClient.getMilestoneByName(milestoneTitle);
 		const prData: IssueOrPRRequestData = {
 			milestone: milestone.number,
 		};
 
-		ConsoleLogColor.gray(`   ⏳Assigning pr to milestone '${chosenVersion}'.`);
+		ConsoleLogColor.gray(`   ⏳Assigning pr to milestone '${milestoneTitle}'.`);
 		await this.prClient.updatePullRequest(prNumber, prData);
 
 		const prUrl = `https://github.com/${ownerName}/${repoName}/pull/${prNumber}`;
@@ -409,7 +410,12 @@ export class ReleasePrepper {
 		return true;
 	}
 
-	private async getAndValidateVersion(): Promise<string> {
+	/**
+	 * Gets the version from the user and trims and validates the version.
+	 * @param settings The prepare release settings.
+	 * @returns The validated and trimmed version.
+	 */
+	private async getAndValidateVersion(settings: PrepareReleaseSettings): Promise<string> {
 		let chosenVersion = "";
 
 		let versionExists = true;
@@ -440,9 +446,24 @@ export class ReleasePrepper {
 			}
 		}
 
+		// Trim the starting section of the version if trim values exist
+		if (!Guards.isNothing(settings.trimFromStartOfVersion)) {
+			for (let i = 0; i < settings.trimFromStartOfVersion.length; i++) {
+				const trimValue = settings.trimFromStartOfVersion[i];
+
+				if (chosenVersion.startsWith(trimValue)) {
+					chosenVersion = chosenVersion.slice(trimValue.length);
+				}
+			}
+		}
+
 		return chosenVersion;
 	}
 
+	/**
+	 * Creates a release branch based on the given {@link releaseType}.
+	 * @param releaseType The type of release.
+	 */
 	private async createReleaseBranch(releaseType: ReleaseType): Promise<void> {
 		const createBranchResult = await runAsync("git", ["checkout", "-B", releaseType.headBranch]);
 
@@ -472,6 +493,7 @@ export class ReleasePrepper {
 		let notesDirPath = releaseType.releaseNotesDirPath.trim().replace(/\\/g, "/");
 
 		notesDirPath = notesDirPath.endsWith("/") ? notesDirPath.slice(0, -1) : notesDirPath;
+		chosenVersion = chosenVersion.startsWith("v") ? chosenVersion : `v${chosenVersion}`;
 
 		const settings = this.loadGenNotesSettings(releaseType, chosenVersion, tokenEnvVarName);
 
@@ -742,9 +764,11 @@ export class ReleasePrepper {
 	}
 
 	private async milestoneExists(chosenVersion: string): Promise<boolean> {
-		ConsoleLogColor.gray(`   ⏳Validating milestone '${chosenVersion}'.`);
+		const title = chosenVersion.startsWith("v") ? chosenVersion : `v${chosenVersion}`;
 
-		return await this.milestoneClient.milestoneExists(chosenVersion);
+		ConsoleLogColor.gray(`   ⏳Validating milestone '${title}'.`);
+
+		return await this.milestoneClient.milestoneExists(title);
 	}
 
 	/**

@@ -2,6 +2,7 @@
     "version": "v1.0.0-preview.5",
     "tasks": {
         "check": "deno check **/*/*.ts",
+        "lint": "deno lint **/*/*.ts",
         "tests": "deno test ./Tests/*Tests.ts",
         "reload-cache": "deno cache --reload --lock=deno.lock \"*/**/*.ts\""
     },
