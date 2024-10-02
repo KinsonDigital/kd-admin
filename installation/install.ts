@@ -37,7 +37,7 @@ if (existsSync(`./${createPrShellFileName}`, { isFile: true })) {
 	});
 
 	if (confirmCreatePRShellScript) {
-		Deno.writeTextFileSync(`./${createPrShellFileName}`, "& \"dev-tools/bin/kd-admin\" create-pr;\n");
+		Deno.writeTextFileSync(`./${createPrShellFileName}`, '& "dev-tools/bin/kd-admin" create-pr;\n');
 		console.log(`%c\tCreated '${createPrShellFileName}' file.`, "color: gray");
 	}
 }
@@ -51,7 +51,7 @@ if (existsSync(`./${prepareReleaseShellFileName}`, { isFile: true })) {
 	});
 
 	if (confirmCreatePrepareReleaseShellScript) {
-		Deno.writeTextFileSync(`./${prepareReleaseShellFileName}`, "& \"dev-tools/bin/kd-admin\" prepare-for-release;\n");
+		Deno.writeTextFileSync(`./${prepareReleaseShellFileName}`, '& "dev-tools/bin/kd-admin" prepare-for-release;\n');
 		console.log(`%c\tCreated '${prepareReleaseShellFileName}' file.`, "color: gray");
 	}
 }
@@ -69,12 +69,12 @@ if (existsSync(`./dev-tools/${createPrSettingsFileName}`, { isFile: true })) {
 			ownerName: "",
 			repoName: "",
 			githubTokenEnvVarName: "",
-			baseBranches: []
+			baseBranches: [],
 		};
 
 		const settingsObj = {
 			$schema: "https://raw.githubusercontent.com/KinsonDigital/kd-admin/preview/schemas/create-pr-schema.json",
-			...prSettings
+			...prSettings,
 		};
 
 		Deno.writeTextFileSync(`./dev-tools/${createPrSettingsFileName}`, `${JSON.stringify(settingsObj, null, 4)}\n`);
@@ -89,7 +89,7 @@ if (existsSync(`./dev-tools/${prepareReleaseSettingsFileName}`, { isFile: true }
 		message: "Do you want to add a the prepare for release setting files?",
 		default: true,
 	});
-	
+
 	if (confirmCreatePrepareReleaseSettingFiles) {
 		const prepareReleaseSettings: PrepareReleaseSettings = {
 			ownerName: "",
