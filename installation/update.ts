@@ -9,13 +9,13 @@ const tagClient = new TagClient("KinsonDigital", "kd-admin");
 const tags: string[] = (await tagClient.getAllTags()).map((t) => t.name);
 const latestVersion = tags[0];
 
-filesToUpdate.forEach(async file => {
-	await updateFile(file);
+filesToUpdate.forEach(file => {
+	updateFile(file);
 });
 
 console.log(`%ckd-admin has been updated to version '${latestVersion}'.`, "color: green");
 
-async function updateFile (filePath: string) {
+function updateFile (filePath: string) {
 	const isInstalled = existsSync(filePath, { isFile: true });
 
 	if (!isInstalled) {
