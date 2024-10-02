@@ -37,6 +37,10 @@
         "releaseNotesFilePrefix": {
             "type": "string",
             "description": "The path to the version number in the JSON file. Only used if the file is a JSON file. (Optional)"
+        },
+        "trimFromStartOfVersion": {
+            "type": "array",
+            "description": "The list of strings to trim from the start of the version number. (Optional)"
         }
     },
     "required": ["ownerName", "repoName", "releaseTypes", "githubTokenEnvVarName"]

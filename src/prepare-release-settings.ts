@@ -44,4 +44,9 @@ export interface PrepareReleaseSettings {
 	 * Gets the value to prefix the release notes file name with.
 	 */
 	releaseNotesFilePrefix?: string;
+
+	/**
+	 * Gets the list of strings to trim from the start of the version.
+	 */
+	trimFromStartOfVersion?: string[];
 }
